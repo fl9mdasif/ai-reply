@@ -1,0 +1,91 @@
+import { MongoClient, type Db } from 'mongodb';
+import { env } from '../config/env.js';
+
+let client: MongoClient | undefined;
+let db: Db | undefined;
+
+export async function connectDb(): Promise<Db> {
+  if (db) return db;
+
+  client = new MongoClient(env.MONGODB_URI);
+  await client.connect();
+  db = client.db(env.MONGODB_DB_NAME);
+  await ensureIndexes(db);
+
+  return db;
+}
+
+export function getDb(): Db {
+  if (!db) {
+    throw new Error('Database not connected. Call connectDb() first.');
+  }
+  return db;
+}
+
+export async function closeDb(): Promise<void> {
+  if (client) {
+    await client.close();
+    client = undefined;
+    db = undefined;
+  }
+}
+
+export async function pingDb(): Promise<boolean> {
+  try {
+    await getDb().command({ ping: 1 });
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+export function sellersCollection() {
+  return getDb().collection('sellers');
+}
+
+export function productsCollection() {
+  return getDb().collection('products');
+}
+
+export function conversationsCollection() {
+  return getDb().collection('conversations');
+}
+
+export function ordersCollection() {
+  return getDb().collection('orders');
+}
+
+export function webhookEventsCollection() {
+  return getDb().collection('webhook_events');
+}
+
+export async function ensureIndexes(targetDb: Db): Promise<void> {
+  await Promise.all([
+    targetDb.collection('sellers').createIndex({ email: 1 }, { unique: true }),
+    targetDb
+      .collection('sellers')
+      .createIndex({ facebookPageId: 1 }, { unique: true, sparse: true }),
+
+    targetDb.collection('products').createIndex({ sellerId: 1, updatedAt: -1 }),
+    targetDb.collection('products').createIndex({ sellerId: 1, nameLower: 1 }),
+
+    targetDb
+      .collection('conversations')
+      .createIndex({ sellerId: 1, customerPsid: 1 }, { unique: true }),
+    targetDb
+      .collection('conversations')
+      .createIndex({ lastActivityAt: 1 }, { expireAfterSeconds: 60 * 60 * 24 * 30 }),
+
+    targetDb.collection('orders').createIndex({ sellerId: 1, createdAt: -1 }),
+    targetDb.collection('orders').createIndex({ sellerId: 1, status: 1, createdAt: -1 }),
+    targetDb.collection('orders').createIndex(
+      { sheetRowWritten: 1, sheetWriteAttempts: 1 },
+      { partialFilterExpression: { sheetRowWritten: false } },
+    ),
+
+    targetDb.collection('webhook_events').createIndex({ mid: 1 }, { unique: true }),
+    targetDb
+      .collection('webhook_events')
+      .createIndex({ createdAt: 1 }, { expireAfterSeconds: 60 * 60 * 24 * 2 }),
+  ]);
+}

@@ -15,17 +15,17 @@ Last updated: 2026-10-13
 ## Summary
 
 <!-- progress:start -->
-Overall: **11/115** items done (10%)
+Overall: **22/115** items done (19%)
 
 ```
-[##------------------] 10%
+[####----------------] 19%
 ```
 
 | Group | Done | Percent | Status |
 |---|---|---|---|
 | Prerequisites and planning | 3/8 | 38% | In progress |
 | M0 Scaffold | 8/8 | 100% | Done |
-| M1 Foundation | 0/13 | 0% | Not started |
+| M1 Foundation | 11/13 | 85% | In progress |
 | M2 Auth and Seller | 0/15 | 0% | Not started |
 | M3 Catalog | 0/10 | 0% | Not started |
 | M4 Webhook pipe | 0/7 | 0% | Not started |
@@ -65,19 +65,19 @@ Overall: **11/115** items done (10%)
 
 ### M1 Foundation
 
-- [ ] FND-1 `config/env.ts` validates all env vars with Zod and the app refuses to boot on a bad value (M)
-- [ ] FND-2 `lib/db.ts` connects to Mongo and creates every index in PRD section 9 (M)
-- [ ] FND-3 `lib/logger.ts`, request id middleware and `pino-http` with secret redaction and masked phone numbers (M)
-- [ ] FND-4 `lib/errors.ts` typed errors and `error-handler` returning `{ error: { code, message } }` (M)
-- [ ] FND-5 `app.ts` and `server.ts` split, helmet, CORS allowlist, 100 KB body limit, trust proxy (M)
-- [ ] FND-6 General rate limiter in place (M)
-- [ ] FND-7 `lib/crypto.ts` AES-256-GCM encrypt and decrypt with round trip and tamper tests (M)
-- [ ] FND-8 Graceful shutdown on SIGTERM (M)
-- [ ] FND-9 `scripts/stub-rag-engine.ts` returns canned `/embed`, `/respond`, `/risk-score`, `/health` (M)
-- [ ] HLT-1 `GET /health` returns 200 with no dependencies (M)
-- [ ] HLT-2 `GET /health/deps` reports Mongo and rag-engine status (M)
-- [ ] FND-10 Deployed to Railway staging, `/health` returns 200 over the public URL (M)
-- [ ] Checkpoint M1: error shape consistent on 400, 404, 500 and bad JSON; app boots only with valid env; deployed to staging
+- [x] FND-1 `config/env.ts` validates all env vars with Zod and the app refuses to boot on a bad value (M)
+- [x] FND-2 `lib/db.ts` connects to Mongo and creates every index in PRD section 9 (M)
+- [x] FND-3 `lib/logger.ts`, request id middleware and `pino-http` with secret redaction and masked phone numbers (M)
+- [x] FND-4 `lib/errors.ts` typed errors and `error-handler` returning `{ error: { code, message } }` (M)
+- [x] FND-5 `app.ts` and `server.ts` split, helmet, CORS allowlist, 100 KB body limit, trust proxy (M)
+- [x] FND-6 General rate limiter in place (M)
+- [x] FND-7 `lib/crypto.ts` AES-256-GCM encrypt and decrypt with round trip and tamper tests (M)
+- [x] FND-8 Graceful shutdown on SIGTERM (M)
+- [x] FND-9 `scripts/stub-rag-engine.ts` returns canned `/embed`, `/respond`, `/risk-score`, `/health` (M)
+- [x] HLT-1 `GET /health` returns 200 with no dependencies (M)
+- [x] HLT-2 `GET /health/deps` reports Mongo and rag-engine status (M)
+- [ ] FND-10 Deployed to Railway staging, `/health` returns 200 over the public URL (M) — blocked: Railway project not created yet (see Prerequisites)
+- [ ] Checkpoint M1: error shape consistent on 400, 404, 500 and bad JSON; app boots only with valid env; deployed to staging — blocked on FND-10 only, everything else verified
 
 ### M2 Auth and Seller
 
