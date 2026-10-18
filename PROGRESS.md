@@ -15,10 +15,10 @@ Last updated: 2026-10-18
 ## Summary
 
 <!-- progress:start -->
-Overall: **46/115** items done (40%)
+Overall: **52/115** items done (45%)
 
 ```
-[########------------] 40%
+[#########-----------] 45%
 ```
 
 | Group | Done | Percent | Status |
@@ -28,7 +28,7 @@ Overall: **46/115** items done (40%)
 | M1 Foundation | 11/13 | 85% | In progress |
 | M2 Auth and Seller | 14/15 | 93% | In progress |
 | M3 Catalog | 10/10 | 100% | Done |
-| M4 Webhook pipe | 0/7 | 0% | Not started |
+| M4 Webhook pipe | 6/7 | 86% | In progress |
 | M5 Reply loop | 0/12 | 0% | Not started |
 | M6 Order flow (conversation state machine) | 0/8 | 0% | Not started |
 | M7 Sheets integration | 0/9 | 0% | Not started |
@@ -112,13 +112,13 @@ Overall: **46/115** items done (40%)
 
 ### M4 Webhook pipe
 
-- [ ] WH-1 Handshake with constant-time verify token compare (M)
-- [ ] WH-2 Signature verified on the raw body, bad signature returns 401 (M)
-- [ ] WH-3 Duplicate `mid` processed once (`webhook_events`) (M)
-- [ ] WH-4 Seller resolved by Page id, unknown or suspended Page ignored with 200 (M)
-- [ ] WH-5 Valid-signature requests always get 200 (M)
-- [ ] Per-Page webhook rate limit (M)
-- [ ] Checkpoint M4: a real message from the test Page appears in staging logs within seconds; a request with a bad signature is rejected with 401
+- [x] WH-1 Handshake with constant-time verify token compare (M)
+- [x] WH-2 Signature verified on the raw body, bad signature returns 401 (M)
+- [x] WH-3 Duplicate `mid` processed once (`webhook_events`) (M)
+- [x] WH-4 Seller resolved by Page id, unknown or suspended Page ignored with 200 (M)
+- [x] WH-5 Valid-signature requests always get 200 (M)
+- [x] Per-Page webhook rate limit (M)
+- [ ] Checkpoint M4: a real message from the test Page appears in staging logs within seconds; a request with a bad signature is rejected with 401 — bad-signature rejection verified by test; the real-Page half is blocked on a Meta test Page + staging deploy (see Prerequisites)
 
 ### M5 Reply loop
 

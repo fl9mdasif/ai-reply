@@ -43,6 +43,27 @@ function toProfile(seller: SellerDoc): SellerProfile {
   };
 }
 
+export interface ActiveSellerForWebhook {
+  sellerId: string;
+  fallbackMessage?: string;
+  // Still AES-256-GCM encrypted; decrypt with lib/crypto.ts only at the
+  // moment of sending (M5's meta-client Send API wiring).
+  facebookPageAccessToken?: string;
+}
+
+// WH-4: resolves a seller by Page id for the webhook module, treating a
+// suspended seller the same as an unknown Page (ignored, not an error).
+export async function findActiveSellerByPageId(pageId: string): Promise<ActiveSellerForWebhook | null> {
+  const seller = await findSellerByPageId(pageId);
+  if (!seller || seller.status !== 'active') return null;
+
+  return {
+    sellerId: seller._id.toString(),
+    fallbackMessage: seller.fallbackMessage,
+    facebookPageAccessToken: seller.facebookPageAccessToken,
+  };
+}
+
 export async function getMe(sellerId: string): Promise<SellerProfile> {
   const seller = await findSellerById(sellerId);
   if (!seller) throw new NotFoundError('Seller not found');

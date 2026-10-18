@@ -11,6 +11,7 @@ import { healthRouter } from './modules/health/health.routes.js';
 import { authRouter } from './modules/auth/auth.routes.js';
 import { sellerRouter } from './modules/seller/seller.routes.js';
 import { catalogRouter } from './modules/catalog/catalog.routes.js';
+import { webhookRouter } from './modules/webhook/webhook.routes.js';
 
 export function buildApp(): Express {
   const app = express();
@@ -36,9 +37,12 @@ export function buildApp(): Express {
     }),
   );
 
-  // NOTE: /webhook/messenger (built in M4) must mount express.raw() for its own
-  // route before this JSON parser, since Meta's signature is computed over the
-  // raw request body.
+  // /webhook/messenger mounts its own express.raw() ahead of the app-wide
+  // JSON parser below, since Meta's signature is computed over the raw
+  // request body. It also sits outside generalLimiter — it has its own,
+  // different rate limit (per-Page, enforced in webhook.service.ts).
+  app.use(webhookRouter);
+
   app.use(express.json({ limit: '100kb' }));
 
   app.use(generalLimiter);

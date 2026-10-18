@@ -41,6 +41,14 @@ export interface ProductDoc {
   updatedAt: Date;
 }
 
+// PRD section 9.5
+export interface WebhookEventDoc {
+  _id: ObjectId;
+  mid: string;
+  pageId: string;
+  createdAt: Date;
+}
+
 let client: MongoClient | undefined;
 let db: Db | undefined;
 
@@ -96,7 +104,7 @@ export function ordersCollection() {
 }
 
 export function webhookEventsCollection() {
-  return getDb().collection('webhook_events');
+  return getDb().collection<WebhookEventDoc>('webhook_events');
 }
 
 export async function ensureIndexes(targetDb: Db): Promise<void> {

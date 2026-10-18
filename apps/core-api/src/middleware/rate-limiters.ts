@@ -34,13 +34,9 @@ export const registerLimiter = rateLimit({
   handler,
 });
 
-// PRD 8.5: POST /webhook/messenger, 60 per minute per Page id. Wired in M4.
-export const webhookLimiter = rateLimit({
-  windowMs: 60 * 1000,
-  limit: 60,
-  standardHeaders: true,
-  legacyHeaders: false,
-  keyGenerator: (req) =>
-    (req.params as { pageId?: string } | undefined)?.pageId ?? req.ip ?? 'unknown',
-  handler,
-});
+// NOTE: PRD 8.5's "POST /webhook/messenger, 60 per minute per Page id" is not
+// implemented as Express middleware here. A single webhook request can carry
+// multiple entries for different Pages, and the Page id only exists inside
+// the parsed body — not as a route param or a per-request key express-rate-
+// limit can see before the body is read. It's enforced per messaging event
+// instead, in modules/webhook/webhook.service.ts.
