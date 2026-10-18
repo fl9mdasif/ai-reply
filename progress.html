@@ -137,10 +137,10 @@ footer {
   <code>node scripts/generate-progress-html.mjs</code> after updating it.</p>
 
   <div class="hero">
-    <div class="hero-figure"><span class="num">63/113</span><span class="pct">56%</span></div>
+    <div class="hero-figure"><span class="num">71/113</span><span class="pct">63%</span></div>
     <div class="hero-detail">
       <div class="label">Requirements verified with a passing, named test</div>
-      <div class="hero-track"><span style="width:56%"></span></div>
+      <div class="hero-track"><span style="width:63%"></span></div>
     </div>
   </div>
 
@@ -316,24 +316,24 @@ footer {
       </details>
     </div>
 
-    <div class="milestone todo">
+    <div class="milestone done">
       <div class="node">M6</div>
-      <details class="ms-card todo" id="section-7">
+      <details class="ms-card done" id="section-7">
         <summary class="ms-head">
           <span class="chev"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 6 15 12 9 18"></polyline></svg></span>
           <span class="ms-name">M6 Order flow (conversation state machine)</span>
-          <span class="ms-meta"><span class="ms-count">0/8</span><span class="pill todo">Not started</span></span>
+          <span class="ms-meta"><span class="ms-count">8/8</span><span class="pill done">Done</span></span>
         </summary>
-        <div class="ms-track"><span style="width:0%"></span></div>
+        <div class="ms-track"><span style="width:100%"></span></div>
         <ul class="req-list">
-            <li class="todo"><span class="check no"></span><span>CONV-3 Field extraction merges across messages, multi-field messages handled, no re-asking filled fields (M)</span></li>
-            <li class="todo"><span class="check no"></span><span>CONV-4 Deterministic missing-field prompts (M)</span></li>
-            <li class="todo"><span class="check no"></span><span>CONV-5 Phone format check with one re-ask (M)</span></li>
-            <li class="todo"><span class="check no"></span><span>CONV-6 Summary and &quot;reply YES to confirm&quot; step (M)</span></li>
-            <li class="todo"><span class="check no"></span><span>CONV-7 Confirm, cancel and correction handling in <code>awaiting_confirmation</code> (M)</span></li>
-            <li class="todo"><span class="check no"></span><span>CONV-8 Stale drafts (30 minutes) discarded (M)</span></li>
-            <li class="todo"><span class="check no"></span><span>CONV-9 Cancel phrase clears the draft at any point (S)</span></li>
-            <li class="todo"><span class="check no"></span><span>Checkpoint M6: &quot;I want to order&quot; walks through all five fields live; all fields in one message does not re-ask; wrong phone is asked about once</span></li>
+            <li class="done"><span class="check yes">✓</span><span>CONV-3 Field extraction merges across messages, multi-field messages handled, no re-asking filled fields (M)</span></li>
+            <li class="done"><span class="check yes">✓</span><span>CONV-4 Deterministic missing-field prompts (M)</span></li>
+            <li class="done"><span class="check yes">✓</span><span>CONV-5 Phone format check with one re-ask (M)</span></li>
+            <li class="done"><span class="check yes">✓</span><span>CONV-6 Summary and &quot;reply YES to confirm&quot; step (M)</span></li>
+            <li class="done"><span class="check yes">✓</span><span>CONV-7 Confirm, cancel and correction handling in <code>awaiting_confirmation</code> (M) — confirm returns a stub &quot;order received&quot; reply for now; wiring it to real order.service.createFromDraft (risk score, Mongo, Sheets) is M8</span></li>
+            <li class="done"><span class="check yes">✓</span><span>CONV-8 Stale drafts (30 minutes) discarded (M)</span></li>
+            <li class="done"><span class="check yes">✓</span><span>CONV-9 Cancel phrase clears the draft at any point (S)</span></li>
+            <li class="done"><span class="check yes">✓</span><span>Checkpoint M6: &quot;I want to order&quot; walks through all five fields live; all fields in one message does not re-ask; wrong phone is asked about once</span></li>
         </ul>
       </details>
     </div>

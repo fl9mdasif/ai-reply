@@ -15,10 +15,10 @@ Last updated: 2026-10-18
 ## Summary
 
 <!-- progress:start -->
-Overall: **63/115** items done (55%)
+Overall: **71/115** items done (62%)
 
 ```
-[###########---------] 55%
+[############--------] 62%
 ```
 
 | Group | Done | Percent | Status |
@@ -30,7 +30,7 @@ Overall: **63/115** items done (55%)
 | M3 Catalog | 10/10 | 100% | Done |
 | M4 Webhook pipe | 6/7 | 86% | In progress |
 | M5 Reply loop | 11/12 | 92% | In progress |
-| M6 Order flow (conversation state machine) | 0/8 | 0% | Not started |
+| M6 Order flow (conversation state machine) | 8/8 | 100% | Done |
 | M7 Sheets integration | 0/9 | 0% | Not started |
 | M8 Orders | 0/11 | 0% | Not started |
 | M9 Hardening | 0/9 | 0% | Not started |
@@ -137,14 +137,14 @@ Overall: **63/115** items done (55%)
 
 ### M6 Order flow (conversation state machine)
 
-- [ ] CONV-3 Field extraction merges across messages, multi-field messages handled, no re-asking filled fields (M)
-- [ ] CONV-4 Deterministic missing-field prompts (M)
-- [ ] CONV-5 Phone format check with one re-ask (M)
-- [ ] CONV-6 Summary and "reply YES to confirm" step (M)
-- [ ] CONV-7 Confirm, cancel and correction handling in `awaiting_confirmation` (M)
-- [ ] CONV-8 Stale drafts (30 minutes) discarded (M)
-- [ ] CONV-9 Cancel phrase clears the draft at any point (S)
-- [ ] Checkpoint M6: "I want to order" walks through all five fields live; all fields in one message does not re-ask; wrong phone is asked about once
+- [x] CONV-3 Field extraction merges across messages, multi-field messages handled, no re-asking filled fields (M)
+- [x] CONV-4 Deterministic missing-field prompts (M)
+- [x] CONV-5 Phone format check with one re-ask (M)
+- [x] CONV-6 Summary and "reply YES to confirm" step (M)
+- [x] CONV-7 Confirm, cancel and correction handling in `awaiting_confirmation` (M) — confirm returns a stub "order received" reply for now; wiring it to real order.service.createFromDraft (risk score, Mongo, Sheets) is M8
+- [x] CONV-8 Stale drafts (30 minutes) discarded (M)
+- [x] CONV-9 Cancel phrase clears the draft at any point (S)
+- [x] Checkpoint M6: "I want to order" walks through all five fields live; all fields in one message does not re-ask; wrong phone is asked about once
 
 ### M7 Sheets integration
 

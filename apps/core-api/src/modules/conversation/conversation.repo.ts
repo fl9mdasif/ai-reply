@@ -51,8 +51,16 @@ export async function saveConversationTurn(
   orderDraft: OrderDraft | undefined,
 ): Promise<void> {
   const now = new Date();
+  const setFields: Partial<ConversationDoc> = { messages, state, stateUpdatedAt: now, lastActivityAt: now };
+  if (orderDraft !== undefined) setFields.orderDraft = orderDraft;
+
   await conversationsCollection().updateOne(
     { _id: conversationId },
-    { $set: { messages, state, orderDraft, stateUpdatedAt: now, lastActivityAt: now } },
+    {
+      $set: setFields,
+      // Clearing the draft removes the field entirely rather than setting it
+      // to null, matching the optional type (orderDraft?: OrderDraft).
+      ...(orderDraft === undefined ? { $unset: { orderDraft: '' } } : {}),
+    },
   );
 }
