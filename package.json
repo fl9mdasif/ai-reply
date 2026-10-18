@@ -1,0 +1,7 @@
+{
+  "name": "jobabai",
+  "private": true,
+  "workspaces": [
+    "apps/*"
+  ]
+}

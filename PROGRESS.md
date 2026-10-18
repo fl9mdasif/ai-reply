@@ -15,16 +15,16 @@ Last updated: 2026-10-13
 ## Summary
 
 <!-- progress:start -->
-Overall: **3/115** items done (3%)
+Overall: **11/115** items done (10%)
 
 ```
-[#-------------------] 3%
+[##------------------] 10%
 ```
 
 | Group | Done | Percent | Status |
 |---|---|---|---|
 | Prerequisites and planning | 3/8 | 38% | In progress |
-| M0 Scaffold | 0/8 | 0% | Not started |
+| M0 Scaffold | 8/8 | 100% | Done |
 | M1 Foundation | 0/13 | 0% | Not started |
 | M2 Auth and Seller | 0/15 | 0% | Not started |
 | M3 Catalog | 0/10 | 0% | Not started |
@@ -54,14 +54,14 @@ Overall: **3/115** items done (3%)
 
 ### M0 Scaffold
 
-- [ ] M0-1 `package.json` with scripts: `dev`, `build`, `start`, `test`, `lint`, `format` (M)
-- [ ] M0-2 TypeScript `strict: true` config (M)
-- [ ] M0-3 ESLint and Prettier configured and passing (M)
-- [ ] M0-4 Vitest, supertest, mongodb-memory-server and msw installed, one sample test passes (M)
-- [ ] M0-5 Folder structure from PRD section 6.1 created (M)
-- [ ] M0-6 `.env.example` lists every variable from PRD section 7 with placeholders only (M)
-- [ ] M0-7 First commit on the `staging` branch (M)
-- [ ] Checkpoint M0: `npm run lint`, `npm run build`, `npm test` all pass on a clean checkout
+- [x] M0-1 `package.json` with scripts: `dev`, `build`, `start`, `test`, `lint`, `format` (M)
+- [x] M0-2 TypeScript `strict: true` config (M)
+- [x] M0-3 ESLint and Prettier configured and passing (M)
+- [x] M0-4 Vitest, supertest, mongodb-memory-server and msw installed, one sample test passes (M)
+- [x] M0-5 Folder structure from PRD section 6.1 created (M)
+- [x] M0-6 `.env.example` lists every variable from PRD section 7 with placeholders only (M)
+- [x] M0-7 First commit on the `staging` branch (M)
+- [x] Checkpoint M0: `npm run lint`, `npm run build`, `npm test` all pass on a clean checkout
 
 ### M1 Foundation
 
