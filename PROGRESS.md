@@ -15,10 +15,10 @@ Last updated: 2026-10-18
 ## Summary
 
 <!-- progress:start -->
-Overall: **71/115** items done (62%)
+Overall: **78/115** items done (68%)
 
 ```
-[############--------] 62%
+[##############------] 68%
 ```
 
 | Group | Done | Percent | Status |
@@ -31,7 +31,7 @@ Overall: **71/115** items done (62%)
 | M4 Webhook pipe | 6/7 | 86% | In progress |
 | M5 Reply loop | 11/12 | 92% | In progress |
 | M6 Order flow (conversation state machine) | 8/8 | 100% | Done |
-| M7 Sheets integration | 0/9 | 0% | Not started |
+| M7 Sheets integration | 7/9 | 78% | In progress |
 | M8 Orders | 0/11 | 0% | Not started |
 | M9 Hardening | 0/9 | 0% | Not started |
 | Integration with the real rag-engine | 0/3 | 0% | Not started |
@@ -148,15 +148,15 @@ Overall: **71/115** items done (62%)
 
 ### M7 Sheets integration
 
-- [ ] SHT-1 Minimum OAuth scope confirmed against the real Sheets API (M)
-- [ ] SHT-2 Signed `state` verified on callback (M)
-- [ ] SHT-3 Callback stores encrypted refresh token and creates the "jobabai Orders" sheet (M)
-- [ ] SHT-4 `appendOrderRow` writes the agreed columns (M)
-- [ ] SHT-5 Revoked or expired grant becomes `SheetsAuthError`, no crash (M)
-- [ ] SHT-6 Idempotent append on retry (Order ID lookup) (M)
-- [ ] SHT-7 5 second timeout and one retry on Sheets calls (M)
-- [ ] SHT-8 Disconnect Google (C)
-- [ ] Checkpoint M7: OAuth completed with your own Google account, a test row lands in the real Sheet within seconds
+- [ ] SHT-1 Minimum OAuth scope confirmed against the real Sheets API (M) — `drive.file` requested; needs a real Google OAuth client to verify sufficiency
+- [x] SHT-2 Signed `state` verified on callback (M)
+- [x] SHT-3 Callback stores encrypted refresh token and creates the "jobabai Orders" sheet (M)
+- [x] SHT-4 `appendOrderRow` writes the agreed columns (M)
+- [x] SHT-5 Revoked or expired grant becomes `SheetsAuthError`, no crash (M)
+- [x] SHT-6 Idempotent append on retry (Order ID lookup) (M)
+- [x] SHT-7 5 second timeout and one retry on Sheets calls (M)
+- [x] SHT-8 Disconnect Google (C)
+- [ ] Checkpoint M7: OAuth completed with your own Google account, a test row lands in the real Sheet within seconds — blocked on a real Google OAuth client (see Prerequisites); all logic verified with mocked Google APIs
 
 ### M8 Orders
 

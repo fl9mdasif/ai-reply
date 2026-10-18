@@ -1,4 +1,5 @@
 import type { Request, Response } from 'express';
+import { disconnectGoogle } from '../sheets-integration/sheets-integration.service.js';
 import { connectFacebookSchema, patchMeSchema } from './seller.schema.js';
 import {
   buildSheetsConsentUrl,
@@ -32,5 +33,11 @@ export async function deleteConnectFacebookHandler(req: Request, res: Response):
 
 export function getSheetsUrlHandler(req: Request, res: Response): void {
   const result = buildSheetsConsentUrl(req.sellerId);
+  res.status(200).json(result);
+}
+
+// SHT-8
+export async function deleteSheetsHandler(req: Request, res: Response): Promise<void> {
+  const result = await disconnectGoogle(req.sellerId);
   res.status(200).json(result);
 }

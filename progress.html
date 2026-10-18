@@ -137,10 +137,10 @@ footer {
   <code>node scripts/generate-progress-html.mjs</code> after updating it.</p>
 
   <div class="hero">
-    <div class="hero-figure"><span class="num">71/113</span><span class="pct">63%</span></div>
+    <div class="hero-figure"><span class="num">78/113</span><span class="pct">69%</span></div>
     <div class="hero-detail">
       <div class="label">Requirements verified with a passing, named test</div>
-      <div class="hero-track"><span style="width:63%"></span></div>
+      <div class="hero-track"><span style="width:69%"></span></div>
     </div>
   </div>
 
@@ -338,25 +338,25 @@ footer {
       </details>
     </div>
 
-    <div class="milestone todo">
+    <div class="milestone active">
       <div class="node">M7</div>
-      <details class="ms-card todo" id="section-8">
+      <details class="ms-card active" open id="section-8">
         <summary class="ms-head">
           <span class="chev"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 6 15 12 9 18"></polyline></svg></span>
           <span class="ms-name">M7 Sheets integration</span>
-          <span class="ms-meta"><span class="ms-count">0/9</span><span class="pill todo">Not started</span></span>
+          <span class="ms-meta"><span class="ms-count">7/9</span><span class="pill active">In progress</span></span>
         </summary>
-        <div class="ms-track"><span style="width:0%"></span></div>
+        <div class="ms-track"><span style="width:78%"></span></div>
         <ul class="req-list">
-            <li class="todo"><span class="check no"></span><span>SHT-1 Minimum OAuth scope confirmed against the real Sheets API (M)</span></li>
-            <li class="todo"><span class="check no"></span><span>SHT-2 Signed <code>state</code> verified on callback (M)</span></li>
-            <li class="todo"><span class="check no"></span><span>SHT-3 Callback stores encrypted refresh token and creates the &quot;jobabai Orders&quot; sheet (M)</span></li>
-            <li class="todo"><span class="check no"></span><span>SHT-4 <code>appendOrderRow</code> writes the agreed columns (M)</span></li>
-            <li class="todo"><span class="check no"></span><span>SHT-5 Revoked or expired grant becomes <code>SheetsAuthError</code>, no crash (M)</span></li>
-            <li class="todo"><span class="check no"></span><span>SHT-6 Idempotent append on retry (Order ID lookup) (M)</span></li>
-            <li class="todo"><span class="check no"></span><span>SHT-7 5 second timeout and one retry on Sheets calls (M)</span></li>
-            <li class="todo"><span class="check no"></span><span>SHT-8 Disconnect Google (C)</span></li>
-            <li class="todo"><span class="check no"></span><span>Checkpoint M7: OAuth completed with your own Google account, a test row lands in the real Sheet within seconds</span></li>
+            <li class="todo"><span class="check no"></span><span>SHT-1 Minimum OAuth scope confirmed against the real Sheets API (M) — <code>drive.file</code> requested; needs a real Google OAuth client to verify sufficiency</span></li>
+            <li class="done"><span class="check yes">✓</span><span>SHT-2 Signed <code>state</code> verified on callback (M)</span></li>
+            <li class="done"><span class="check yes">✓</span><span>SHT-3 Callback stores encrypted refresh token and creates the &quot;jobabai Orders&quot; sheet (M)</span></li>
+            <li class="done"><span class="check yes">✓</span><span>SHT-4 <code>appendOrderRow</code> writes the agreed columns (M)</span></li>
+            <li class="done"><span class="check yes">✓</span><span>SHT-5 Revoked or expired grant becomes <code>SheetsAuthError</code>, no crash (M)</span></li>
+            <li class="done"><span class="check yes">✓</span><span>SHT-6 Idempotent append on retry (Order ID lookup) (M)</span></li>
+            <li class="done"><span class="check yes">✓</span><span>SHT-7 5 second timeout and one retry on Sheets calls (M)</span></li>
+            <li class="done"><span class="check yes">✓</span><span>SHT-8 Disconnect Google (C)</span></li>
+            <li class="todo"><span class="check no"></span><span>Checkpoint M7: OAuth completed with your own Google account, a test row lands in the real Sheet within seconds — blocked on a real Google OAuth client (see Prerequisites); all logic verified with mocked Google APIs</span></li>
         </ul>
       </details>
     </div>

@@ -2,6 +2,7 @@ import { Router } from 'express';
 import { authGuard } from '../../middleware/auth-guard.js';
 import {
   deleteConnectFacebookHandler,
+  deleteSheetsHandler,
   getMeHandler,
   getSheetsUrlHandler,
   patchMeHandler,
@@ -16,3 +17,4 @@ sellerRouter.patch('/seller/me', patchMeHandler);
 sellerRouter.post('/seller/connect-facebook', postConnectFacebookHandler);
 sellerRouter.delete('/seller/connect-facebook', deleteConnectFacebookHandler);
 sellerRouter.get('/seller/connect-sheets/url', getSheetsUrlHandler);
+sellerRouter.delete('/seller/connect-sheets', deleteSheetsHandler);
