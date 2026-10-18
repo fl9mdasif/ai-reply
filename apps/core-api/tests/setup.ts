@@ -12,3 +12,6 @@ process.env.META_APP_SECRET ??= 'test-meta-app-secret';
 process.env.META_VERIFY_TOKEN ??= 'test-verify-token';
 process.env.RAG_ENGINE_URL ??= 'http://localhost:4000';
 process.env.RAG_ENGINE_INTERNAL_TOKEN ??= 'test-internal-token';
+process.env.GOOGLE_OAUTH_CLIENT_ID ??= 'test-google-client-id';
+process.env.GOOGLE_OAUTH_CLIENT_SECRET ??= 'test-google-client-secret';
+process.env.GOOGLE_OAUTH_REDIRECT_URI ??= 'http://localhost:3000/integrations/google/callback';

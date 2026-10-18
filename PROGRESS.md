@@ -10,15 +10,15 @@ The single place to see how far the build is. Right now the focus is **`apps/cor
 - After ticking boxes, run `node scripts/progress.mjs --write` from the repo root. It recomputes the summary table below. Commit `PROGRESS.md` together with the code it describes.
 - Anything new that comes up and is not in the PRD goes into "Parking lot" at the bottom, not into the milestones.
 
-Last updated: 2026-10-13
+Last updated: 2026-10-18
 
 ## Summary
 
 <!-- progress:start -->
-Overall: **22/115** items done (19%)
+Overall: **36/115** items done (31%)
 
 ```
-[####----------------] 19%
+[######--------------] 31%
 ```
 
 | Group | Done | Percent | Status |
@@ -26,7 +26,7 @@ Overall: **22/115** items done (19%)
 | Prerequisites and planning | 3/8 | 38% | In progress |
 | M0 Scaffold | 8/8 | 100% | Done |
 | M1 Foundation | 11/13 | 85% | In progress |
-| M2 Auth and Seller | 0/15 | 0% | Not started |
+| M2 Auth and Seller | 14/15 | 93% | In progress |
 | M3 Catalog | 0/10 | 0% | Not started |
 | M4 Webhook pipe | 0/7 | 0% | Not started |
 | M5 Reply loop | 0/12 | 0% | Not started |
@@ -81,21 +81,21 @@ Overall: **22/115** items done (19%)
 
 ### M2 Auth and Seller
 
-- [ ] AUTH-1 Register validates, lowercases email, hashes password, creates seller (M)
-- [ ] AUTH-2 Invite code enforced when `REGISTRATION_MODE=invite` (M)
-- [ ] AUTH-3 Duplicate email returns 409 (M)
-- [ ] AUTH-4 Login returns JWT, all failures return the same 401 (M)
-- [ ] AUTH-5 `auth-guard` verifies JWT, loads seller, rejects suspended sellers, sets `req.sellerId` (M)
-- [ ] AUTH-6 Login and register rate limits (M)
-- [ ] AUTH-7 Passwords and hashes never in logs or responses (M)
-- [ ] SEL-1 `GET /seller/me` returns profile with no secret fields (M)
-- [ ] SEL-2 `POST /seller/connect-facebook` validates token against Graph API, encrypts and stores it (M)
-- [ ] SEL-3 Page already connected to another seller returns 409 (M)
-- [ ] SEL-4 App subscribed to the Page after connect, `webhookSubscribed` recorded (M)
-- [ ] SEL-5 `DELETE /seller/connect-facebook` unsubscribes and clears fields (S)
-- [ ] SEL-6 `PATCH /seller/me` with whitelisted fields (S)
-- [ ] SEL-7 `GET /seller/connect-sheets/url` with signed state (M)
-- [ ] Checkpoint M2: register, login, `/seller/me` and Page connect work end to end against a real test Page; first isolation test file exists
+- [x] AUTH-1 Register validates, lowercases email, hashes password, creates seller (M)
+- [x] AUTH-2 Invite code enforced when `REGISTRATION_MODE=invite` (M)
+- [x] AUTH-3 Duplicate email returns 409 (M)
+- [x] AUTH-4 Login returns JWT, all failures return the same 401 (M)
+- [x] AUTH-5 `auth-guard` verifies JWT, loads seller, rejects suspended sellers, sets `req.sellerId` (M)
+- [x] AUTH-6 Login and register rate limits (M)
+- [x] AUTH-7 Passwords and hashes never in logs or responses (M)
+- [x] SEL-1 `GET /seller/me` returns profile with no secret fields (M)
+- [x] SEL-2 `POST /seller/connect-facebook` validates token against Graph API, encrypts and stores it (M)
+- [x] SEL-3 Page already connected to another seller returns 409 (M)
+- [x] SEL-4 App subscribed to the Page after connect, `webhookSubscribed` recorded (M)
+- [x] SEL-5 `DELETE /seller/connect-facebook` unsubscribes and clears fields (S)
+- [x] SEL-6 `PATCH /seller/me` with whitelisted fields (S)
+- [x] SEL-7 `GET /seller/connect-sheets/url` with signed state (M)
+- [ ] Checkpoint M2: register, login, `/seller/me` and Page connect work end to end against a real test Page; first isolation test file exists — isolation test file exists and all logic is tested (Graph API mocked with msw); blocked only on a real Meta test Page to verify end to end
 
 ### M3 Catalog
 

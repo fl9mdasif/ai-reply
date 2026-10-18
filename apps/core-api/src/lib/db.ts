@@ -1,5 +1,25 @@
-import { MongoClient, type Db } from 'mongodb';
+import { MongoClient, type Db, type ObjectId } from 'mongodb';
 import { env } from '../config/env.js';
+
+// PRD section 9.1
+export interface SellerDoc {
+  _id: ObjectId;
+  businessName: string;
+  email: string;
+  passwordHash: string;
+  status: 'active' | 'suspended';
+  plan: string;
+  facebookPageId?: string;
+  facebookPageName?: string;
+  facebookPageAccessToken?: string;
+  webhookSubscribed: boolean;
+  googleSheetId?: string;
+  googleSheetUrl?: string;
+  googleOAuthRefreshToken?: string;
+  fallbackMessage?: string;
+  createdAt: Date;
+  updatedAt: Date;
+}
 
 let client: MongoClient | undefined;
 let db: Db | undefined;
@@ -40,7 +60,7 @@ export async function pingDb(): Promise<boolean> {
 }
 
 export function sellersCollection() {
-  return getDb().collection('sellers');
+  return getDb().collection<SellerDoc>('sellers');
 }
 
 export function productsCollection() {
