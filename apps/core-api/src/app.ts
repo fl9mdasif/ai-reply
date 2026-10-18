@@ -10,6 +10,7 @@ import { errorHandler } from './middleware/error-handler.js';
 import { healthRouter } from './modules/health/health.routes.js';
 import { authRouter } from './modules/auth/auth.routes.js';
 import { sellerRouter } from './modules/seller/seller.routes.js';
+import { catalogRouter } from './modules/catalog/catalog.routes.js';
 
 export function buildApp(): Express {
   const app = express();
@@ -45,6 +46,7 @@ export function buildApp(): Express {
   app.use(healthRouter);
   app.use(authRouter);
   app.use(sellerRouter);
+  app.use(catalogRouter);
 
   app.use((req, res) => {
     res.status(404).json({ error: { code: 'NOT_FOUND', message: `No route for ${req.method} ${req.path}` } });

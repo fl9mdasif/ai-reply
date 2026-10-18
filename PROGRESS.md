@@ -15,10 +15,10 @@ Last updated: 2026-10-18
 ## Summary
 
 <!-- progress:start -->
-Overall: **36/115** items done (31%)
+Overall: **46/115** items done (40%)
 
 ```
-[######--------------] 31%
+[########------------] 40%
 ```
 
 | Group | Done | Percent | Status |
@@ -27,7 +27,7 @@ Overall: **36/115** items done (31%)
 | M0 Scaffold | 8/8 | 100% | Done |
 | M1 Foundation | 11/13 | 85% | In progress |
 | M2 Auth and Seller | 14/15 | 93% | In progress |
-| M3 Catalog | 0/10 | 0% | Not started |
+| M3 Catalog | 10/10 | 100% | Done |
 | M4 Webhook pipe | 0/7 | 0% | Not started |
 | M5 Reply loop | 0/12 | 0% | Not started |
 | M6 Order flow (conversation state machine) | 0/8 | 0% | Not started |
@@ -99,16 +99,16 @@ Overall: **36/115** items done (31%)
 
 ### M3 Catalog
 
-- [ ] CAT-1 Create, read, list, update, delete scoped by `sellerId` (M)
-- [ ] CAT-2 Zod validation with bounds (M)
-- [ ] CAT-3 Embed call after every create and update, Mongo write never rolled back (M)
-- [ ] CAT-4 `embedStatus` tracked as synced or failed and returned to the seller (M)
-- [ ] CAT-5 Delete removes Mongo doc then calls vector removal, failure logged (M)
-- [ ] CAT-6 `POST /catalog/:id/reembed` (S)
-- [ ] CAT-7 `POST /catalog/import` bulk JSON import with bounded concurrency (S)
-- [ ] CAT-8 Pagination on list (M)
-- [ ] CAT-9 `nameLower` maintained for order-time matching (M)
-- [ ] Checkpoint M3: add, edit, delete a product via the API with the stub; malformed entry rejected; seller B cannot see seller A's products
+- [x] CAT-1 Create, read, list, update, delete scoped by `sellerId` (M)
+- [x] CAT-2 Zod validation with bounds (M)
+- [x] CAT-3 Embed call after every create and update, Mongo write never rolled back (M)
+- [x] CAT-4 `embedStatus` tracked as synced or failed and returned to the seller (M)
+- [x] CAT-5 Delete removes Mongo doc then calls vector removal, failure logged (M)
+- [x] CAT-6 `POST /catalog/:id/reembed` (S)
+- [x] CAT-7 `POST /catalog/import` bulk JSON import with bounded concurrency (S)
+- [x] CAT-8 Pagination on list (M)
+- [x] CAT-9 `nameLower` maintained for order-time matching (M)
+- [x] Checkpoint M3: add, edit, delete a product via the API with the stub; malformed entry rejected; seller B cannot see seller A's products
 
 ### M4 Webhook pipe
 

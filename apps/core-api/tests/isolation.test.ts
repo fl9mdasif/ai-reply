@@ -82,4 +82,24 @@ describe('Seller isolation', () => {
     const resB = await request(app).get('/seller/me').set('Authorization', `Bearer ${tokenB}`);
     expect(resB.body.businessName).toBe('Seller B Shop');
   });
+
+  it("GET /catalog only lists the authenticated seller's own products", async () => {
+    const createdByA = await request(app)
+      .post('/catalog')
+      .set('Authorization', `Bearer ${tokenA}`)
+      .send({ name: "Seller A's Product", price: 100 });
+    expect(createdByA.status).toBe(201);
+
+    const listA = await request(app).get('/catalog').set('Authorization', `Bearer ${tokenA}`);
+    const listB = await request(app).get('/catalog').set('Authorization', `Bearer ${tokenB}`);
+
+    const idsA = listA.body.products.map((p: { productId: string }) => p.productId);
+    const idsB = listB.body.products.map((p: { productId: string }) => p.productId);
+
+    expect(idsA).toContain(createdByA.body.productId);
+    expect(idsB).not.toContain(createdByA.body.productId);
+
+    // GET/PUT/DELETE by id are covered directly in catalog.test.ts's CAT-1
+    // test (seller B gets 404, never 403, when guessing seller A's ids).
+  });
 });

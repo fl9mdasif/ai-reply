@@ -21,6 +21,26 @@ export interface SellerDoc {
   updatedAt: Date;
 }
 
+// PRD section 9.2
+export interface FaqEntry {
+  question: string;
+  answer: string;
+}
+
+export interface ProductDoc {
+  _id: ObjectId;
+  sellerId: string;
+  name: string;
+  nameLower: string;
+  price: number;
+  description?: string;
+  faqEntries?: FaqEntry[];
+  embedStatus: 'pending' | 'synced' | 'failed';
+  embedError?: string;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
 let client: MongoClient | undefined;
 let db: Db | undefined;
 
@@ -64,7 +84,7 @@ export function sellersCollection() {
 }
 
 export function productsCollection() {
-  return getDb().collection('products');
+  return getDb().collection<ProductDoc>('products');
 }
 
 export function conversationsCollection() {
