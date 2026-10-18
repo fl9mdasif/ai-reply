@@ -1,7 +1,16 @@
+import { decrypt } from '../../lib/crypto.js';
 import { logger } from '../../lib/logger.js';
+import { sendText } from '../../lib/meta-client.js';
+import { handleCustomerMessage } from '../conversation/conversation.service.js';
 import { findActiveSellerByPageId } from '../seller/seller.service.js';
 import { recordWebhookEvent } from './webhook.repo.js';
 import type { MessagingEvent, WebhookPayload } from './webhook.schema.js';
+
+// WH-9: non-text messages (stickers, images, attachments-only) get this
+// canned reply and never reach the AI.
+const NON_TEXT_CANNED_REPLY =
+  'We can only read text messages right now — please type your question. ' +
+  'আমরা এখন শুধু লেখা পড়তে পারি, আপনার প্রশ্নটি লিখে পাঠান।';
 
 // Per-Page rate limit (PRD 8.5: 60/min/Page). Not Express middleware — see
 // the note in middleware/rate-limiters.ts for why. A fixed window per Page
@@ -75,10 +84,32 @@ async function processMessagingEvent(pageId: string, event: MessagingEvent): Pro
     return;
   }
 
-  // M4 stops here: the reply loop (rag-engine /respond, Send API, fallback
-  // message) is WH-6..WH-10, built in M5 against conversation.service.
+  const psid = event.sender?.id;
+  if (!psid) {
+    logger.warn({ pageId, mid }, 'Webhook message event missing sender id, skipping');
+    return;
+  }
+
+  const startedAt = Date.now();
+
+  // WH-9: non-text messages never reach the AI.
+  const text = event.message.text;
+  const { reply, usedFallback } = text
+    ? await handleCustomerMessage(seller.sellerId, psid, text, seller.fallbackMessage)
+    : { reply: NON_TEXT_CANNED_REPLY, usedFallback: false };
+
+  // WH-7: send via the Send API, decrypting the Page token only now, at the
+  // moment of use. A send failure is logged inside sendText, never thrown.
+  if (seller.facebookPageAccessToken) {
+    await sendText(decrypt(seller.facebookPageAccessToken), psid, reply);
+  } else {
+    logger.warn({ sellerId: seller.sellerId, pageId, mid }, 'No Page access token stored, cannot reply');
+  }
+
+  // WH-8: logged for observability against the 15s budget (8s rag-engine
+  // timeout + one retry is the dominant cost; see PRD section 11.1).
   logger.info(
-    { sellerId: seller.sellerId, pageId, mid, hasText: Boolean(event.message.text) },
-    'Webhook message received',
+    { sellerId: seller.sellerId, pageId, mid, usedFallback, durationMs: Date.now() - startedAt },
+    'Webhook message processed',
   );
 }

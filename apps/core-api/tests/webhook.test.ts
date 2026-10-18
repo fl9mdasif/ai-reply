@@ -1,7 +1,9 @@
-import { afterAll, beforeAll, beforeEach, describe, expect, it } from 'vitest';
+import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it } from 'vitest';
 import request from 'supertest';
 import { createHmac } from 'node:crypto';
 import type { Express } from 'express';
+import { setupServer } from 'msw/node';
+import { http, HttpResponse } from 'msw';
 import { getSharedMongoUri } from './global-setup.js';
 
 function sign(secret: string, body: string): string {
@@ -269,6 +271,186 @@ describe('M4 Webhook pipe', () => {
       const webhookEventsModule = await import('../src/lib/db.js');
       const count = await webhookEventsModule.webhookEventsCollection().countDocuments({ mid: 'mid-rl-over' });
       expect(count).toBe(1); // dedup record is still written; only the seller lookup/log is skipped
+    });
+  });
+
+  describe('M5 reply loop (end to end)', () => {
+    const SEND_API_URL = 'https://graph.facebook.com/v21.0/me/messages';
+    const externalServer = setupServer();
+
+    beforeAll(() => externalServer.listen({ onUnhandledRequest: 'bypass' }));
+    afterEach(() => externalServer.resetHandlers());
+    afterAll(() => externalServer.close());
+
+    async function seedSellerWithPageToken(pageId: string, fallbackMessage?: string): Promise<void> {
+      const authRepo = await import('../src/modules/auth/auth.repo.js');
+      const { encrypt } = await import('../src/lib/crypto.js');
+      const now = new Date();
+      await authRepo.insertSeller({
+        businessName: 'Reply Loop Shop',
+        email: `reply-loop-${pageId}@example.com`,
+        passwordHash: 'unused',
+        status: 'active',
+        plan: 'pilot',
+        facebookPageId: pageId,
+        facebookPageAccessToken: encrypt('fake-page-access-token'),
+        webhookSubscribed: true,
+        fallbackMessage,
+        createdAt: now,
+        updatedAt: now,
+      });
+    }
+
+    it('sends the rag-engine reply back to the customer via the Send API', async () => {
+      const pageId = `reply-loop-page-${Date.now()}`;
+      await seedSellerWithPageToken(pageId);
+
+      let sentMessage: { recipient: { id: string }; message: { text: string }; messaging_type: string } | undefined;
+      externalServer.use(
+        http.post('http://localhost:4000/respond', () =>
+          HttpResponse.json({ reply: 'Yes, that saree is in stock.', orderIntentDetected: false }),
+        ),
+        http.post(SEND_API_URL, async ({ request: req }) => {
+          sentMessage = (await req.json()) as typeof sentMessage;
+          return HttpResponse.json({ recipient_id: 'psid-1', message_id: 'mid-out-1' });
+        }),
+      );
+
+      const body = JSON.stringify({
+        object: 'page',
+        entry: [
+          {
+            id: pageId,
+            messaging: [{ sender: { id: 'psid-1' }, message: { mid: `mid-reply-${Date.now()}`, text: 'Is the red saree in stock?' } }],
+          },
+        ],
+      });
+
+      const res = await request(app)
+        .post('/webhook/messenger')
+        .set('Content-Type', 'application/json')
+        .set('X-Hub-Signature-256', sign(APP_SECRET, body))
+        .send(body);
+
+      expect(res.status).toBe(200);
+      expect(sentMessage).toEqual({
+        recipient: { id: 'psid-1' },
+        message: { text: 'Yes, that saree is in stock.' },
+        messaging_type: 'RESPONSE',
+      });
+    });
+
+    it('WH-6: sends the fallback message via the Send API when rag-engine fails', async () => {
+      const pageId = `reply-loop-fallback-page-${Date.now()}`;
+      await seedSellerWithPageToken(pageId, 'We will reply as soon as possible.');
+
+      let sentText: string | undefined;
+      externalServer.use(
+        http.post('http://localhost:4000/respond', () => HttpResponse.error()),
+        http.post(SEND_API_URL, async ({ request: req }) => {
+          const payload = (await req.json()) as { message: { text: string } };
+          sentText = payload.message.text;
+          return HttpResponse.json({ recipient_id: 'psid-1', message_id: 'mid-out-2' });
+        }),
+      );
+
+      const body = JSON.stringify({
+        object: 'page',
+        entry: [
+          {
+            id: pageId,
+            messaging: [{ sender: { id: 'psid-1' }, message: { mid: `mid-fallback-${Date.now()}`, text: 'hello?' } }],
+          },
+        ],
+      });
+
+      const res = await request(app)
+        .post('/webhook/messenger')
+        .set('Content-Type', 'application/json')
+        .set('X-Hub-Signature-256', sign(APP_SECRET, body))
+        .send(body);
+
+      expect(res.status).toBe(200);
+      expect(sentText).toBe('We will reply as soon as possible.');
+    });
+
+    it('WH-9: a non-text message gets the canned reply and never reaches the AI', async () => {
+      const pageId = `reply-loop-nontext-page-${Date.now()}`;
+      await seedSellerWithPageToken(pageId);
+
+      let respondCalled = false;
+      let sentText: string | undefined;
+      externalServer.use(
+        http.post('http://localhost:4000/respond', () => {
+          respondCalled = true;
+          return HttpResponse.json({ reply: 'should not be used', orderIntentDetected: false });
+        }),
+        http.post(SEND_API_URL, async ({ request: req }) => {
+          const payload = (await req.json()) as { message: { text: string } };
+          sentText = payload.message.text;
+          return HttpResponse.json({ recipient_id: 'psid-1', message_id: 'mid-out-3' });
+        }),
+      );
+
+      const body = JSON.stringify({
+        object: 'page',
+        entry: [
+          {
+            id: pageId,
+            messaging: [{ sender: { id: 'psid-1' }, message: { mid: `mid-sticker-${Date.now()}`, attachments: [{ type: 'image' }] } }],
+          },
+        ],
+      });
+
+      const res = await request(app)
+        .post('/webhook/messenger')
+        .set('Content-Type', 'application/json')
+        .set('X-Hub-Signature-256', sign(APP_SECRET, body))
+        .send(body);
+
+      expect(res.status).toBe(200);
+      expect(respondCalled).toBe(false);
+      expect(sentText).toContain('text messages');
+
+      const dbModule = await import('../src/lib/db.js');
+      const seller = await dbModule.sellersCollection().findOne({ facebookPageId: pageId });
+      const conversation = await dbModule
+        .conversationsCollection()
+        .findOne({ sellerId: seller?._id.toString(), customerPsid: 'psid-1' });
+      expect(conversation).toBeNull();
+    });
+
+    it('a Meta Send API error is logged, never thrown — the webhook still returns 200', async () => {
+      const pageId = `reply-loop-send-error-page-${Date.now()}`;
+      await seedSellerWithPageToken(pageId);
+
+      externalServer.use(
+        http.post('http://localhost:4000/respond', () =>
+          HttpResponse.json({ reply: 'hello back', orderIntentDetected: false }),
+        ),
+        http.post(SEND_API_URL, () =>
+          HttpResponse.json({ error: { message: 'Invalid OAuth access token', code: 190 } }, { status: 400 }),
+        ),
+      );
+
+      const body = JSON.stringify({
+        object: 'page',
+        entry: [
+          {
+            id: pageId,
+            messaging: [{ sender: { id: 'psid-1' }, message: { mid: `mid-senderror-${Date.now()}`, text: 'hi' } }],
+          },
+        ],
+      });
+
+      const res = await request(app)
+        .post('/webhook/messenger')
+        .set('Content-Type', 'application/json')
+        .set('X-Hub-Signature-256', sign(APP_SECRET, body))
+        .send(body);
+
+      expect(res.status).toBe(200);
+      expect(res.body).toEqual({ received: true });
     });
   });
 });

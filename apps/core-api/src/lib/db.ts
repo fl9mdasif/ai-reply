@@ -49,6 +49,33 @@ export interface WebhookEventDoc {
   createdAt: Date;
 }
 
+// PRD section 9.3
+export interface ConversationMessage {
+  role: 'customer' | 'assistant';
+  text: string;
+  ts: Date;
+}
+
+export interface OrderDraft {
+  product?: string;
+  quantity?: number;
+  customerName?: string;
+  phone?: string;
+  address?: string;
+  phoneAttempts?: number;
+}
+
+export interface ConversationDoc {
+  _id: ObjectId;
+  sellerId: string;
+  customerPsid: string;
+  messages: ConversationMessage[];
+  state: 'idle' | 'collecting_order' | 'awaiting_confirmation';
+  orderDraft?: OrderDraft;
+  stateUpdatedAt: Date;
+  lastActivityAt: Date;
+}
+
 let client: MongoClient | undefined;
 let db: Db | undefined;
 
@@ -96,7 +123,7 @@ export function productsCollection() {
 }
 
 export function conversationsCollection() {
-  return getDb().collection('conversations');
+  return getDb().collection<ConversationDoc>('conversations');
 }
 
 export function ordersCollection() {

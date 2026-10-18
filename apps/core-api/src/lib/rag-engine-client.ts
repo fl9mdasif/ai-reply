@@ -92,3 +92,49 @@ export async function removeEmbedding(sellerId: string, productId: string): Prom
     throw new UpstreamError('Failed to remove embedding');
   }
 }
+
+export interface HistoryTurn {
+  role: 'customer' | 'assistant';
+  text: string;
+}
+
+export interface RespondInput {
+  sellerId: string;
+  customerPsid: string;
+  message: string;
+  history: HistoryTurn[];
+}
+
+export interface RespondResult {
+  reply: string;
+  orderIntentDetected: boolean;
+  extractedFields?: Record<string, unknown>;
+}
+
+const respondResponseSchema = z.object({
+  reply: z.string(),
+  orderIntentDetected: z.boolean(),
+  extractedFields: z.record(z.unknown()).optional(),
+});
+
+// CONV-2: 8s timeout, one retry with a short backoff. Unlike embed/
+// removeEmbedding, this never throws — it returns null on any failure so
+// the webhook's fallback message path (WH-6) always has something to send.
+export async function respond(input: RespondInput): Promise<RespondResult | null> {
+  const attempt = () =>
+    ragEngineRequest({ method: 'POST', path: '/respond', body: input, timeoutMs: 8000 });
+
+  try {
+    let body: unknown;
+    try {
+      body = await attempt();
+    } catch {
+      await new Promise((resolve) => setTimeout(resolve, 250));
+      body = await attempt();
+    }
+    return respondResponseSchema.parse(body);
+  } catch (err) {
+    logger.error({ err, sellerId: input.sellerId }, 'rag-engine respond failed');
+    return null;
+  }
+}

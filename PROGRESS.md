@@ -15,10 +15,10 @@ Last updated: 2026-10-18
 ## Summary
 
 <!-- progress:start -->
-Overall: **52/115** items done (45%)
+Overall: **63/115** items done (55%)
 
 ```
-[#########-----------] 45%
+[###########---------] 55%
 ```
 
 | Group | Done | Percent | Status |
@@ -29,7 +29,7 @@ Overall: **52/115** items done (45%)
 | M2 Auth and Seller | 14/15 | 93% | In progress |
 | M3 Catalog | 10/10 | 100% | Done |
 | M4 Webhook pipe | 6/7 | 86% | In progress |
-| M5 Reply loop | 0/12 | 0% | Not started |
+| M5 Reply loop | 11/12 | 92% | In progress |
 | M6 Order flow (conversation state machine) | 0/8 | 0% | Not started |
 | M7 Sheets integration | 0/9 | 0% | Not started |
 | M8 Orders | 0/11 | 0% | Not started |
@@ -122,18 +122,18 @@ Overall: **52/115** items done (45%)
 
 ### M5 Reply loop
 
-- [ ] `lib/rag-engine-client.ts` with timeouts, one retry, Zod-validated responses, internal token header (M)
-- [ ] `lib/meta-client.ts` Send API wrapper, failures logged not thrown (M)
-- [ ] CONV-1 Conversation upsert and rolling message window (M)
-- [ ] CONV-2 Idle messages go to `/respond`, order intent detected (M)
-- [ ] CONV-10 Assistant replies appended to the window (M)
-- [ ] CONV-11 Only the stored window is sent as history (M)
-- [ ] WH-6 Fallback message sent when the AI path fails (M)
-- [ ] WH-7 Send API uses `messaging_type: RESPONSE`, Meta errors logged with code (M)
-- [ ] WH-8 Per-event processing stays under 15 seconds (M)
-- [ ] WH-9 Non-text messages get the canned reply (S)
+- [x] `lib/rag-engine-client.ts` with timeouts, one retry, Zod-validated responses, internal token header (M)
+- [x] `lib/meta-client.ts` Send API wrapper, failures logged not thrown (M)
+- [x] CONV-1 Conversation upsert and rolling message window (M)
+- [x] CONV-2 Idle messages go to `/respond`, order intent detected (M)
+- [x] CONV-10 Assistant replies appended to the window (M)
+- [x] CONV-11 Only the stored window is sent as history (M)
+- [x] WH-6 Fallback message sent when the AI path fails (M)
+- [x] WH-7 Send API uses `messaging_type: RESPONSE`, Meta errors logged with code (M)
+- [x] WH-8 Per-event processing stays under 15 seconds (M)
+- [x] WH-9 Non-text messages get the canned reply (S)
 - [ ] WH-10 Typing indicator before the AI call (C)
-- [ ] Checkpoint M5: with the stub, a message to the test Page gets a reply back in Messenger; with the stub stopped, the fallback reply is sent; duplicate delivery produces one reply
+- [x] Checkpoint M5: with the stub, a message to the test Page gets a reply back in Messenger; with the stub stopped, the fallback reply is sent; duplicate delivery produces one reply
 
 ### M6 Order flow (conversation state machine)
 

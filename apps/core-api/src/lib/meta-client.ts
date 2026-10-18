@@ -1,7 +1,7 @@
-// Messenger Send API and Graph API wrapper. Page validation/subscription
-// (SEL-2, SEL-4) land here now; the Send API itself is wired in M5.
+// Messenger Send API and Graph API wrapper.
 import { env } from '../config/env.js';
 import { UpstreamError, ValidationError } from './errors.js';
+import { logger } from './logger.js';
 
 const GRAPH_BASE = 'https://graph.facebook.com';
 const GRAPH_TIMEOUT_MS = 8000;
@@ -64,5 +64,36 @@ export async function unsubscribePageFromApp(pageId: string, accessToken: string
     return response.ok;
   } catch {
     return false;
+  }
+}
+
+interface MetaErrorBody {
+  error?: { message?: string; code?: number; error_subcode?: number };
+}
+
+// WH-7: Send API, messaging_type RESPONSE. A failure is logged with status
+// and Meta's error code, never thrown — the webhook always responds 200
+// regardless (WH-5).
+export async function sendText(pageAccessToken: string, psid: string, text: string): Promise<void> {
+  try {
+    const response = await graphFetch('/me/messages', pageAccessToken, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        recipient: { id: psid },
+        message: { text },
+        messaging_type: 'RESPONSE',
+      }),
+    });
+
+    if (!response.ok) {
+      const errorBody = (await response.json().catch(() => ({}))) as MetaErrorBody;
+      logger.error(
+        { status: response.status, metaError: errorBody.error },
+        'Meta Send API returned an error',
+      );
+    }
+  } catch (err) {
+    logger.error({ err }, 'Meta Send API request failed');
   }
 }
