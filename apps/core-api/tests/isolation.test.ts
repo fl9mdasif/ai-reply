@@ -98,8 +98,128 @@ describe('Seller isolation', () => {
 
     expect(idsA).toContain(createdByA.body.productId);
     expect(idsB).not.toContain(createdByA.body.productId);
+  });
 
-    // GET/PUT/DELETE by id are covered directly in catalog.test.ts's CAT-1
-    // test (seller B gets 404, never 403, when guessing seller A's ids).
+  it('GET /catalog/:id returns 404 (not 403) when seller B guesses seller A product id', async () => {
+    const created = await request(app)
+      .post('/catalog')
+      .set('Authorization', `Bearer ${tokenA}`)
+      .send({ name: 'Secret Product', price: 500 });
+    expect(created.status).toBe(201);
+
+    const res = await request(app)
+      .get(`/catalog/${created.body.productId}`)
+      .set('Authorization', `Bearer ${tokenB}`);
+    expect(res.status).toBe(404);
+  });
+
+  // M9: orders isolation
+  it("GET /orders only lists the authenticated seller's own orders", async () => {
+    const { insertOrder } = await import('../src/modules/order/order.repo.js');
+    const { signSellerToken } = await import('../src/lib/jwt.js');
+    const authRepo = await import('../src/modules/auth/auth.repo.js');
+    const now = new Date();
+
+    const sellerC = await authRepo.insertSeller({
+      businessName: 'Seller C Orders',
+      email: `seller-c-orders-${Date.now()}@example.com`,
+      passwordHash: 'unused',
+      status: 'active',
+      plan: 'pilot',
+      webhookSubscribed: false,
+      createdAt: now,
+      updatedAt: now,
+    });
+    const sellerD = await authRepo.insertSeller({
+      businessName: 'Seller D Orders',
+      email: `seller-d-orders-${Date.now()}@example.com`,
+      passwordHash: 'unused',
+      status: 'active',
+      plan: 'pilot',
+      webhookSubscribed: false,
+      createdAt: now,
+      updatedAt: now,
+    });
+    const tokenC = signSellerToken(sellerC._id.toString());
+    const tokenD = signSellerToken(sellerD._id.toString());
+
+    const orderC = await insertOrder({
+      sellerId: sellerC._id.toString(),
+      customerPsid: 'psid-c',
+      productName: 'C Product',
+      quantity: 1,
+      customerName: 'C Customer',
+      phone: '01711000001',
+      address: 'Dhaka',
+      riskFlags: [],
+      riskScore: null,
+      status: 'pending',
+      sheetRowWritten: false,
+      sheetWriteAttempts: 0,
+      createdAt: now,
+      updatedAt: now,
+    });
+
+    const listC = await request(app).get('/orders').set('Authorization', `Bearer ${tokenC}`);
+    const listD = await request(app).get('/orders').set('Authorization', `Bearer ${tokenD}`);
+
+    expect(listC.status).toBe(200);
+    const orderIds = listC.body.orders.map((o: { orderId: string }) => o.orderId);
+    expect(orderIds).toContain(orderC._id.toString());
+
+    expect(listD.status).toBe(200);
+    const orderIdsD = listD.body.orders.map((o: { orderId: string }) => o.orderId);
+    expect(orderIdsD).not.toContain(orderC._id.toString());
+  });
+
+  it('GET /orders/:id returns 404 (not 403) when seller B guesses seller A order id', async () => {
+    const { insertOrder } = await import('../src/modules/order/order.repo.js');
+    const authRepo = await import('../src/modules/auth/auth.repo.js');
+    const { signSellerToken } = await import('../src/lib/jwt.js');
+    const now = new Date();
+
+    const sellerE = await authRepo.insertSeller({
+      businessName: 'Seller E',
+      email: `seller-e-${Date.now()}@example.com`,
+      passwordHash: 'unused',
+      status: 'active',
+      plan: 'pilot',
+      webhookSubscribed: false,
+      createdAt: now,
+      updatedAt: now,
+    });
+    const sellerF = await authRepo.insertSeller({
+      businessName: 'Seller F',
+      email: `seller-f-${Date.now()}@example.com`,
+      passwordHash: 'unused',
+      status: 'active',
+      plan: 'pilot',
+      webhookSubscribed: false,
+      createdAt: now,
+      updatedAt: now,
+    });
+    const tokenF = signSellerToken(sellerF._id.toString());
+
+    const orderE = await insertOrder({
+      sellerId: sellerE._id.toString(),
+      customerPsid: 'psid-e',
+      productName: 'E Product',
+      quantity: 1,
+      customerName: 'E Customer',
+      phone: '01711000002',
+      address: 'Sylhet',
+      riskFlags: [],
+      riskScore: null,
+      status: 'pending',
+      sheetRowWritten: false,
+      sheetWriteAttempts: 0,
+      createdAt: now,
+      updatedAt: now,
+    });
+
+    const res = await request(app)
+      .get(`/orders/${orderE._id.toString()}`)
+      .set('Authorization', `Bearer ${tokenF}`);
+    expect(res.status).toBe(404);
   });
 });

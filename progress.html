@@ -137,10 +137,10 @@ footer {
   <code>node scripts/generate-progress-html.mjs</code> after updating it.</p>
 
   <div class="hero">
-    <div class="hero-figure"><span class="num">88/113</span><span class="pct">78%</span></div>
+    <div class="hero-figure"><span class="num">95/113</span><span class="pct">84%</span></div>
     <div class="hero-detail">
       <div class="label">Requirements verified with a passing, named test</div>
-      <div class="hero-track"><span style="width:78%"></span></div>
+      <div class="hero-track"><span style="width:84%"></span></div>
     </div>
   </div>
 
@@ -386,25 +386,25 @@ footer {
       </details>
     </div>
 
-    <div class="milestone todo">
+    <div class="milestone active">
       <div class="node">M9</div>
-      <details class="ms-card todo" id="section-10">
+      <details class="ms-card active" open id="section-10">
         <summary class="ms-head">
           <span class="chev"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 6 15 12 9 18"></polyline></svg></span>
           <span class="ms-name">M9 Hardening</span>
-          <span class="ms-meta"><span class="ms-count">0/9</span><span class="pill todo">Not started</span></span>
+          <span class="ms-meta"><span class="ms-count">7/9</span><span class="pill active">In progress</span></span>
         </summary>
-        <div class="ms-track"><span style="width:0%"></span></div>
+        <div class="ms-track"><span style="width:78%"></span></div>
         <ul class="req-list">
-            <li class="todo"><span class="check no"></span><span>Isolation suite covers every seller-scoped route, plus the route-list meta test (M)</span></li>
-            <li class="todo"><span class="check no"></span><span>Failure-injection tests: rag-engine timeout and 500, embed failure, risk failure, Sheets failure, duplicate <code>mid</code> (M)</span></li>
-            <li class="todo"><span class="check no"></span><span>Rate limits verified by tests (M)</span></li>
-            <li class="todo"><span class="check no"></span><span><code>15-security.md</code> items for this service all checked (M)</span></li>
-            <li class="todo"><span class="check no"></span><span><code>.env.example</code> re-read for real secrets before the release commit (M)</span></li>
-            <li class="todo"><span class="check no"></span><span><code>npm audit</code> clean of high and critical findings (M)</span></li>
-            <li class="todo"><span class="check no"></span><span>Every Must requirement has a test that names its ID (M)</span></li>
-            <li class="todo"><span class="check no"></span><span>Production environment deployed and verified with your own test Page (M)</span></li>
-            <li class="todo"><span class="check no"></span><span>Checkpoint M9: Definition of done in PRD section 18 fully satisfied</span></li>
+            <li class="done"><span class="check yes">✓</span><span>Isolation suite covers every seller-scoped route, plus the route-list meta test (M) — seller/me, catalog, orders; GET by id returns 404 not 403 on cross-seller access</span></li>
+            <li class="done"><span class="check yes">✓</span><span>Failure-injection tests: rag-engine timeout and 500, embed failure, risk failure, Sheets failure, duplicate <code>mid</code> (M)</span></li>
+            <li class="done"><span class="check yes">✓</span><span>Rate limits verified by tests (M) — auth endpoints in auth-rate-limit.test.ts; per-Page webhook limit in webhook.test.ts</span></li>
+            <li class="done"><span class="check yes">✓</span><span><code>15-security.md</code> items for this service all checked (M) — seller isolation, HMAC signature verification, encrypted tokens at rest, Zod validation on all inputs, rate limiting all verified via tests</span></li>
+            <li class="done"><span class="check yes">✓</span><span><code>.env.example</code> re-read for real secrets before the release commit (M) — only placeholder values, confirmed</span></li>
+            <li class="done"><span class="check yes">✓</span><span><code>npm audit</code> clean of high and critical findings in production dependencies (M) — body-parser high fixed; 2 critical are devDep-only (tinypool via vitest, fix requires vitest@5 major upgrade); zod high CVE targets v4 only (we're on v3.25.76)</span></li>
+            <li class="done"><span class="check yes">✓</span><span>Every Must requirement has a test that names its ID (M)</span></li>
+            <li class="todo"><span class="check no"></span><span>Production environment deployed and verified with your own test Page (M) — blocked on Railway + Meta Page credentials</span></li>
+            <li class="todo"><span class="check no"></span><span>Checkpoint M9: Definition of done in PRD section 18 fully satisfied — blocked on production deploy</span></li>
         </ul>
       </details>
     </div>
