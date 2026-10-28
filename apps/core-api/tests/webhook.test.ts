@@ -15,10 +15,23 @@ describe('M4 Webhook pipe', () => {
   let closeDb: () => Promise<void>;
   const APP_SECRET = 'test-meta-app-secret'; // matches tests/setup.ts default
 
+  // Stub the rag-engine so that each webhook text message resolves quickly.
+  const ragServer = setupServer(
+    http.post('http://localhost:4000/respond', () =>
+      HttpResponse.json({ reply: 'OK', orderIntentDetected: false }),
+    ),
+    http.post('http://localhost:4000/risk-score', () =>
+      HttpResponse.json({ riskFlags: [], riskScore: 0 }),
+    ),
+  );
+
   beforeAll(async () => {
     process.env.MONGODB_URI = getSharedMongoUri();
     process.env.MONGODB_DB_NAME = 'jobabai_webhook_test';
     process.env.REGISTRATION_MODE = 'open';
+    process.env.RAG_ENGINE_URL = 'http://localhost:4000';
+
+    ragServer.listen({ onUnhandledRequest: 'bypass' });
 
     const dbModule = await import('../src/lib/db.js');
     await dbModule.connectDb();
@@ -34,6 +47,7 @@ describe('M4 Webhook pipe', () => {
   });
 
   afterAll(async () => {
+    ragServer.close();
     await closeDb();
   });
 

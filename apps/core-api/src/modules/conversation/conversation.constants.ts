@@ -26,6 +26,10 @@ export const ORDER_RECEIVED_REPLY =
   "Thank you! Your order has been received and we'll contact you soon. " +
   'ধন্যবাদ! আপনার অর্ডারটি গ্রহণ করা হয়েছে।';
 
+export const ORDER_FAILED_REPLY =
+  "Sorry, we couldn't process your order right now. Please try again or contact us directly. " +
+  'দুঃখিত, এই মুহূর্তে আপনার অর্ডারটি প্রক্রিয়া করা সম্ভব হয়নি। অনুগ্রহ করে আবার চেষ্টা করুন।';
+
 export function buildMissingFieldsPrompt(missing: FieldKey[]): string {
   const list = missing.map((key) => FIELD_LABELS[key]).join(', ');
   return `Thanks! Could you also share: ${list}? ধন্যবাদ! অনুগ্রহ করে এই তথ্যগুলোও দিন: ${list}।`;

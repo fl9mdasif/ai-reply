@@ -1,8 +1,11 @@
 import type { ConversationDoc, ConversationMessage, OrderDraft } from '../../lib/db.js';
+import { logger } from '../../lib/logger.js';
 import { respond, type HistoryTurn } from '../../lib/rag-engine-client.js';
+import { createFromDraft } from '../order/order.service.js';
 import {
   CANCEL_REPLY,
   DEFAULT_FALLBACK_MESSAGE,
+  ORDER_FAILED_REPLY,
   ORDER_RECEIVED_REPLY,
   REQUIRED_FIELDS,
   buildMissingFieldsPrompt,
@@ -241,17 +244,26 @@ async function handleAwaitingConfirmation(
   fallbackMessage?: string,
 ): Promise<HandleMessageResult> {
   if (isConfirmPhrase(text)) {
-    // M8 wires real order creation (risk score, Mongo insert, Sheets
-    // append) in here, replacing this stub reply with
-    // order.service.createFromDraft's result.
-    const assistantMessage: ConversationMessage = { role: 'assistant', text: ORDER_RECEIVED_REPLY, ts: new Date() };
+    let reply = ORDER_RECEIVED_REPLY;
+    try {
+      await createFromDraft({
+        sellerId: conversation.sellerId,
+        conversationId: conversation._id,
+        customerPsid: conversation.customerPsid,
+        draft: draft ?? {},
+      });
+    } catch (err) {
+      logger.error({ err, sellerId: conversation.sellerId }, 'order creation failed on confirm');
+      reply = ORDER_FAILED_REPLY;
+    }
+    const assistantMessage: ConversationMessage = { role: 'assistant', text: reply, ts: new Date() };
     await saveConversationTurn(
       conversation._id,
       appendWindow(conversation.messages, customerMessage, assistantMessage),
       'idle',
       undefined,
     );
-    return { reply: ORDER_RECEIVED_REPLY, usedFallback: false };
+    return { reply, usedFallback: false };
   }
 
   // Anything else is a correction: re-extract and re-summarize.

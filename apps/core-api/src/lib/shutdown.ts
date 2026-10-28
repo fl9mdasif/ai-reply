@@ -4,18 +4,21 @@ import { logger } from './logger.js';
 export interface ShutdownDeps {
   server: Server;
   closeDb: () => Promise<void>;
+  onShutdown?: () => void;
   exit?: (code: number) => void;
 }
 
 // FND-8: graceful shutdown on SIGTERM — stop accepting new connections,
 // let in-flight requests finish, close Mongo, then exit.
-export function createShutdownHandler({ server, closeDb, exit = process.exit }: ShutdownDeps) {
+export function createShutdownHandler({ server, closeDb, onShutdown, exit = process.exit }: ShutdownDeps) {
   let shuttingDown = false;
 
   return function shutdown(signal: string): void {
     if (shuttingDown) return;
     shuttingDown = true;
     logger.info({ signal }, 'Shutting down');
+
+    onShutdown?.();
 
     server.close(() => {
       closeDb()

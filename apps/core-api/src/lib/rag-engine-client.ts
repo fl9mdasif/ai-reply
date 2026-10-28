@@ -138,3 +138,45 @@ export async function respond(input: RespondInput): Promise<RespondResult | null
     return null;
   }
 }
+
+export interface RiskScoreInput {
+  sellerId: string;
+  product: string;
+  quantity: number;
+  customerName: string;
+  phone: string;
+  address: string;
+}
+
+export interface RiskFlag {
+  code: string;
+  reason: string;
+}
+
+export interface RiskScoreResult {
+  riskFlags: RiskFlag[];
+  riskScore: number | null;
+}
+
+const riskScoreResponseSchema = z.object({
+  riskFlags: z.array(z.object({ code: z.string(), reason: z.string() })),
+  riskScore: z.number().nullable(),
+  explanations: z.array(z.string()).optional(),
+});
+
+// ORD-1, ORD-2: 4s timeout, no retry (PRD 11.1). Fail-soft — never throws;
+// a failure becomes the risk_unavailable flag with a null score so a risk
+// check that can't run never blocks or loses an order.
+export async function riskScore(input: RiskScoreInput): Promise<RiskScoreResult> {
+  try {
+    const body = await ragEngineRequest({ method: 'POST', path: '/risk-score', body: input, timeoutMs: 4000 });
+    const parsed = riskScoreResponseSchema.parse(body);
+    return { riskFlags: parsed.riskFlags, riskScore: parsed.riskScore };
+  } catch (err) {
+    logger.error({ err, sellerId: input.sellerId }, 'rag-engine risk-score failed');
+    return {
+      riskFlags: [{ code: 'risk_unavailable', reason: 'Risk check could not run' }],
+      riskScore: null,
+    };
+  }
+}

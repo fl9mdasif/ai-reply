@@ -15,10 +15,10 @@ Last updated: 2026-10-18
 ## Summary
 
 <!-- progress:start -->
-Overall: **78/115** items done (68%)
+Overall: **88/115** items done (77%)
 
 ```
-[##############------] 68%
+[###############-----] 77%
 ```
 
 | Group | Done | Percent | Status |
@@ -32,7 +32,7 @@ Overall: **78/115** items done (68%)
 | M5 Reply loop | 11/12 | 92% | In progress |
 | M6 Order flow (conversation state machine) | 8/8 | 100% | Done |
 | M7 Sheets integration | 7/9 | 78% | In progress |
-| M8 Orders | 0/11 | 0% | Not started |
+| M8 Orders | 10/11 | 91% | In progress |
 | M9 Hardening | 0/9 | 0% | Not started |
 | Integration with the real rag-engine | 0/3 | 0% | Not started |
 | rag-engine (apps/rag-engine) | 0/1 | 0% | Not started |
@@ -141,7 +141,7 @@ Overall: **78/115** items done (68%)
 - [x] CONV-4 Deterministic missing-field prompts (M)
 - [x] CONV-5 Phone format check with one re-ask (M)
 - [x] CONV-6 Summary and "reply YES to confirm" step (M)
-- [x] CONV-7 Confirm, cancel and correction handling in `awaiting_confirmation` (M) — confirm returns a stub "order received" reply for now; wiring it to real order.service.createFromDraft (risk score, Mongo, Sheets) is M8
+- [x] CONV-7 Confirm, cancel and correction handling in `awaiting_confirmation` (M)
 - [x] CONV-8 Stale drafts (30 minutes) discarded (M)
 - [x] CONV-9 Cancel phrase clears the draft at any point (S)
 - [x] Checkpoint M6: "I want to order" walks through all five fields live; all fields in one message does not re-ask; wrong phone is asked about once
@@ -160,17 +160,17 @@ Overall: **78/115** items done (68%)
 
 ### M8 Orders
 
-- [ ] ORD-1 Creation sequence: risk (fail-soft), Mongo insert, Sheets (fail-soft) (M)
-- [ ] ORD-2 Risk failure never blocks an order (M)
-- [ ] ORD-3 Sheets failure never loses an order, `sheetRowWritten` stays false (M)
-- [ ] ORD-4 `GET /orders` and `GET /orders/:id` scoped and paginated (M)
-- [ ] ORD-5 Every risk flag has a human readable reason (M)
-- [ ] ORD-6 `PATCH /orders/:id/status` (S)
-- [ ] ORD-7 `retry-sheet` and `retry-sheets` endpoints (M)
-- [ ] ORD-8 Background retry job, single instance, no overlap (S)
-- [ ] ORD-9 Seller without a Sheet still gets orders saved, retry job skips them (M)
-- [ ] ORD-10 Quantity and text bounds enforced (M)
-- [ ] Checkpoint M8: live order lands in Mongo and the Sheet; with the Google token revoked the order is still saved and flagged, and the retry later writes it exactly once
+- [x] ORD-1 Creation sequence: risk (fail-soft), Mongo insert, Sheets (fail-soft) (M)
+- [x] ORD-2 Risk failure never blocks an order (M)
+- [x] ORD-3 Sheets failure never loses an order, `sheetRowWritten` stays false (M)
+- [x] ORD-4 `GET /orders` and `GET /orders/:id` scoped and paginated (M)
+- [x] ORD-5 Every risk flag has a human readable reason (M)
+- [x] ORD-6 `PATCH /orders/:id/status` (S)
+- [x] ORD-7 `retry-sheet` and `retry-sheets` endpoints (M)
+- [x] ORD-8 Background retry job, single instance, no overlap (S)
+- [x] ORD-9 Seller without a Sheet still gets orders saved, retry job skips them (M)
+- [x] ORD-10 Quantity and text bounds enforced (M)
+- [ ] Checkpoint M8: live order lands in Mongo and the Sheet; with the Google token revoked the order is still saved and flagged, and the retry later writes it exactly once — blocked on real Google OAuth client (same as M7 checkpoint)
 
 ### M9 Hardening
 

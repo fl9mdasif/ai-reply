@@ -15,6 +15,11 @@ export async function findProductById(sellerId: string, productId: string): Prom
   return productsCollection().findOne({ _id: new ObjectId(productId), sellerId });
 }
 
+// CAT-9: used at order time to match a customer-named product to the catalog.
+export async function findProductByNameLower(sellerId: string, nameLower: string): Promise<ProductDoc | null> {
+  return productsCollection().findOne({ sellerId, nameLower });
+}
+
 export interface ProductFieldUpdate {
   name: string;
   nameLower: string;

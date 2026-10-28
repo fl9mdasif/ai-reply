@@ -5,6 +5,7 @@ import { embed, removeEmbedding } from '../../lib/rag-engine-client.js';
 import {
   deleteProduct,
   findProductById,
+  findProductByNameLower,
   insertProduct,
   listProducts,
   setEmbedStatus,
@@ -191,4 +192,17 @@ export async function importProducts(
   await Promise.all(Array.from({ length: workerCount }, () => worker()));
 
   return { created, failed };
+}
+
+export interface ProductMatch {
+  productId: string;
+  unitPrice: number;
+}
+
+// Used by order.service.ts (M8) at order-create time to match a
+// customer-named product to the catalog (CAT-9).
+export async function matchProductByName(sellerId: string, name: string): Promise<ProductMatch | null> {
+  const product = await findProductByNameLower(sellerId, name.toLowerCase());
+  if (!product) return null;
+  return { productId: product._id.toString(), unitPrice: product.price };
 }

@@ -76,6 +76,35 @@ export interface ConversationDoc {
   lastActivityAt: Date;
 }
 
+// PRD section 9.4
+export interface OrderRiskFlag {
+  code: string;
+  reason: string;
+}
+
+export interface OrderDoc {
+  _id: ObjectId;
+  sellerId: string;
+  conversationId?: ObjectId;
+  customerPsid: string;
+  productName: string;
+  productId?: string;
+  unitPrice?: number;
+  total?: number;
+  quantity: number;
+  customerName: string;
+  phone: string;
+  address: string;
+  riskFlags: OrderRiskFlag[];
+  riskScore: number | null;
+  status: 'pending' | 'confirmed' | 'cancelled';
+  sheetRowWritten: boolean;
+  sheetWriteAttempts: number;
+  sheetLastError?: string;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
 let client: MongoClient | undefined;
 let db: Db | undefined;
 
@@ -127,7 +156,7 @@ export function conversationsCollection() {
 }
 
 export function ordersCollection() {
-  return getDb().collection('orders');
+  return getDb().collection<OrderDoc>('orders');
 }
 
 export function webhookEventsCollection() {
