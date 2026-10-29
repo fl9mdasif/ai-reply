@@ -8,6 +8,7 @@ from src.config.settings import get_settings
 from src.routers import health
 from src.routers import embed
 from src.routers import respond
+from src.routers import risk_score
 
 structlog.configure(
     wrapper_class=structlog.make_filtering_bound_logger(logging.INFO),
@@ -48,6 +49,7 @@ def create_app() -> FastAPI:
     # Protected routers
     app.include_router(embed.router)
     app.include_router(respond.router)
+    app.include_router(risk_score.router)
 
     return app
 
