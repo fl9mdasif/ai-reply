@@ -1,0 +1,112 @@
+{
+  "nav": {
+    "features": "Features",
+    "pricing": "Pricing",
+    "howItWorks": "How it works",
+    "contact": "Contact",
+    "cta": "Get Started",
+    "langToggle": "বাংলা"
+  },
+  "hero": {
+    "headline": "Auto-reply for your Facebook store",
+    "subheadline": "jobabai answers product questions, collects COD orders, and screens fake orders — inside Facebook Messenger, automatically.",
+    "ctaPrimary": "Start Free Trial",
+    "ctaSecondary": "Watch Demo",
+    "badge": "Built for Bangladesh F-commerce"
+  },
+  "problem": {
+    "title": "Sound familiar?",
+    "cards": [
+      {
+        "icon": "MessageCircle",
+        "title": "Missed messages",
+        "body": "Hundreds of customer questions pile up overnight. You reply all morning instead of running your business."
+      },
+      {
+        "icon": "AlertTriangle",
+        "title": "COD fraud",
+        "body": "Fake orders with wrong phone numbers and vague addresses waste your stock and courier budget."
+      },
+      {
+        "icon": "PackageX",
+        "title": "Lost orders",
+        "body": "No system means orders fall through the cracks. A customer says they ordered, you have no record."
+      }
+    ]
+  },
+  "howItWorks": {
+    "title": "Up in 3 steps",
+    "steps": [
+      { "num": "01", "title": "Upload your catalog", "body": "Add your products — name, price, description, FAQ. Takes minutes." },
+      { "num": "02", "title": "Connect your Facebook Page", "body": "One-click OAuth. jobabai watches for new Messenger messages." },
+      { "num": "03", "title": "Your bot answers customers", "body": "Grounded replies from your catalog only. Orders go straight to your Google Sheet." }
+    ]
+  },
+  "features": {
+    "title": "Everything your f-commerce needs",
+    "cards": [
+      { "icon": "Bot", "title": "Catalog-grounded replies", "body": "Never invents prices or products not in your catalog." },
+      { "icon": "ShieldCheck", "title": "COD order screening", "body": "Flags malformed phones, suspicious addresses, and bulk-order risk automatically." },
+      { "icon": "Sheet", "title": "Google Sheets integration", "body": "Every confirmed order lands in your own Sheet — no third-party dashboard to learn." },
+      { "icon": "Languages", "title": "Bangla + English mix", "body": "Customers write however they write. jobabai understands both." },
+      { "icon": "AlertOctagon", "title": "Risk score per order", "body": "Each COD order gets a risk score. Ship confident, flag the dodgy ones." },
+      { "icon": "Bell", "title": "Instant seller notification", "body": "New order? You get notified immediately." }
+    ]
+  },
+  "pricing": {
+    "title": "Simple, BDT pricing",
+    "subtitle": "No USD surprises. Pay with bKash, Nagad, or card.",
+    "monthly": "Monthly",
+    "annual": "Annual",
+    "annualSave": "Save 20%",
+    "plans": [
+      {
+        "name": "Starter",
+        "price": "৳999",
+        "period": "/month",
+        "orders": "500 orders/mo",
+        "features": ["Messenger auto-reply", "COD screening", "Google Sheets sync", "Email support"],
+        "cta": "Start free trial"
+      },
+      {
+        "name": "Growth",
+        "price": "৳2,499",
+        "period": "/month",
+        "orders": "2,000 orders/mo",
+        "popular": true,
+        "features": ["Everything in Starter", "Priority support", "Custom fallback message", "Risk report export"],
+        "cta": "Start free trial"
+      },
+      {
+        "name": "Scale",
+        "price": "৳4,999",
+        "period": "/month",
+        "orders": "5,000 orders/mo",
+        "features": ["Everything in Growth", "Dedicated onboarding", "Multiple Pages", "API access"],
+        "cta": "Contact us"
+      }
+    ]
+  },
+  "faq": {
+    "title": "Questions",
+    "items": [
+      { "q": "Does jobabai work with any Facebook Page?", "a": "Yes. Any Facebook Page with Messenger enabled can connect to jobabai with one OAuth click." },
+      { "q": "What if jobabai doesn't know the answer?", "a": "It says so honestly — \"I don't have that information, please contact the seller.\" It never invents prices or products." },
+      { "q": "Is my catalog data safe?", "a": "Your catalog is isolated to your account. No other seller can ever see your products or orders. Data is encrypted at rest." },
+      { "q": "Can I pay with bKash?", "a": "Yes. We accept bKash, Nagad, and card. BDT pricing, no hidden currency conversion." }
+    ]
+  },
+  "cta": {
+    "title": "Start today — free for 14 days",
+    "subtitle": "No credit card required. Cancel any time.",
+    "emailPlaceholder": "Enter your email",
+    "button": "Get Early Access"
+  },
+  "footer": {
+    "tagline": "AI-powered auto-reply for Bangladesh f-commerce sellers.",
+    "links": ["Features", "Pricing", "How it works", "Contact"],
+    "legal": ["Privacy", "Terms"],
+    "langToggle": "বাংলা",
+    "copyright": "© 2026 jobabai. All rights reserved."
+  }
+}

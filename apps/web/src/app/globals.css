@@ -1,0 +1,69 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* jobabai brand tokens — Black · Violet · Lime · White */
+:root {
+  /* brand */
+  --brand-violet:        #7D39EB;
+  --brand-violet-hover:  #6A2DD4;
+  --brand-violet-soft:   #F3EEFF;
+  --brand-lime:          #C6FF33;
+
+  /* semantic — light */
+  --background:          #F8F7FF;
+  --foreground:          #09090B;
+  --card:                #FFFFFF;
+  --card-foreground:     #09090B;
+  --primary:             #7D39EB;
+  --primary-foreground:  #FFFFFF;
+  --muted:               #F3EEFF;
+  --muted-foreground:    #71717A;
+  --accent:              #C6FF33;
+  --accent-foreground:   #09090B;
+  --border:              #EDE9FE;
+  --input:               #EDE9FE;
+  --ring:                #7D39EB;
+  --radius:              0.625rem;
+
+  /* status */
+  --status-confirmed:    #22C55E;
+  --status-risk:         #EF4444;
+  --status-pending:      #F59E0B;
+  --status-processing:   #3B82F6;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background:          #09090B;
+    --foreground:          #F8F7FF;
+    --card:                #111113;
+    --card-foreground:     #F8F7FF;
+    --primary:             #9B6EF3;
+    --primary-foreground:  #09090B;
+    --muted:               #1A1026;
+    --muted-foreground:    #A1A1AA;
+    --border:              #27104A;
+    --input:               #27104A;
+    --ring:                #9B6EF3;
+  }
+}
+
+@layer base {
+  * {
+    box-sizing: border-box;
+    border-color: var(--border);
+  }
+  body {
+    background-color: var(--background);
+    color: var(--foreground);
+    font-family: var(--font-jakarta), 'Noto Sans Bengali', system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+}
