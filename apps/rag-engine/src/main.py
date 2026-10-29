@@ -6,6 +6,7 @@ from fastapi import FastAPI
 
 from src.config.settings import get_settings
 from src.routers import health
+from src.routers import embed
 
 structlog.configure(
     wrapper_class=structlog.make_filtering_bound_logger(logging.INFO),
@@ -43,7 +44,8 @@ def create_app() -> FastAPI:
     # /health — no auth required
     app.include_router(health.router)
 
-    # Protected routers (embed, respond, risk-score) added in RE-M1..M3
+    # Protected routers
+    app.include_router(embed.router)
 
     return app
 
