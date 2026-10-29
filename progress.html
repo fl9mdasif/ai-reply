@@ -1,13 +1,10 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>jobabai Core API Build Tracker</title>
+<title>jobabai Build Tracker</title>
+<meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;1,9..144,500&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
 <style>
+/* layout: tab-switched single-page tracker, rail layout inside each tab */
 :root {
   --bg: #0d1420;
   --panel: #141e2d;
@@ -18,6 +15,10 @@
   --fg-faint: #5c6f88;
   --accent: #41c9b4;
   --accent-soft: #1d3a37;
+  --accent2: #7c9ef8;
+  --accent2-soft: #1a2545;
+  --accent3: #e08352;
+  --accent3-soft: #321f10;
   --ok: #5fd98a;
   --ok-soft: #173024;
   --warn: #eab656;
@@ -33,6 +34,8 @@
     --bg: #f3f0e8; --panel: #ffffff; --panel-raised: #fbf9f3; --border: #e1dccb;
     --fg: #1b2230; --fg-muted: #5c6577; --fg-faint: #93967f;
     --accent: #0f8f7c; --accent-soft: #e2f3ef;
+    --accent2: #3b5fc4; --accent2-soft: #eaeefc;
+    --accent3: #b85c20; --accent3-soft: #f8e8dc;
     --ok: #2f8f4f; --ok-soft: #e4f3e7;
     --warn: #a9690a; --warn-soft: #f7ead2;
     --bad: #b8452f; --bad-soft: #f8e4de;
@@ -41,120 +44,143 @@
 }
 * { box-sizing: border-box; }
 body {
-  margin: 0;
-  background: var(--bg);
-  color: var(--fg);
-  font-family: var(--font-body);
-  font-size: 15px;
-  line-height: 1.5;
-  padding: 0 16px;
+  margin: 0; background: var(--bg); color: var(--fg);
+  font-family: var(--font-body); font-size: 15px; line-height: 1.5;
+  padding-left: max(16px, env(safe-area-inset-left,0px));
+  padding-right: max(16px, env(safe-area-inset-right,0px));
+  padding-block: 0;
 }
 .wrap { max-width: 760px; margin: 0 auto; padding: 32px 0 64px; }
+/* ── header ── */
 .eyebrow {
   font-family: var(--font-mono); font-size: 12px; letter-spacing: 0.08em; text-transform: uppercase;
   color: var(--accent); display: flex; align-items: center; gap: 8px;
 }
-.eyebrow::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: var(--accent); display: inline-block; }
-h1 {
-  font-family: var(--font-display); font-weight: 600; font-size: clamp(28px, 6vw, 38px);
-  margin: 10px 0 6px; letter-spacing: -0.01em;
+.eyebrow::before { content:""; width:6px; height:6px; border-radius:50%; background:var(--accent); display:inline-block; }
+h1 { font-family: var(--font-display); font-weight:600; font-size: clamp(26px,5vw,36px); margin:10px 0 6px; letter-spacing:-0.01em; }
+.subtitle { color:var(--fg-muted); max-width:60ch; }
+.subtitle code { font-family:var(--font-mono); font-size:0.9em; background:var(--panel-raised); border:1px solid var(--border); padding:0 4px; border-radius:4px; }
+/* ── tabs ── */
+.tabs { margin-top:24px; display:flex; gap:4px; border-bottom:1px solid var(--border); }
+.tab-btn {
+  font-family: var(--font-mono); font-size:12.5px; font-weight:500; padding:9px 18px;
+  border:1px solid transparent; border-bottom:none; border-radius:10px 10px 0 0;
+  background:transparent; color:var(--fg-muted); cursor:pointer; letter-spacing:0.02em;
+  position:relative; bottom:-1px; transition: color .12s, background .12s, border-color .12s;
 }
-.subtitle { color: var(--fg-muted); max-width: 60ch; }
-.subtitle code {
-  font-family: var(--font-mono); font-size: 0.9em; background: var(--panel-raised);
-  border: 1px solid var(--border); padding: 0 4px; border-radius: 4px;
-}
-.hero {
-  margin-top: 28px; background: var(--panel); border: 1px solid var(--border); border-radius: 16px;
-  padding: 24px; display: flex; gap: 24px; align-items: center; flex-wrap: wrap;
-}
-.hero-figure { display: flex; align-items: baseline; gap: 6px; white-space: nowrap; }
-.hero-figure .num { font-family: var(--font-display); font-weight: 600; font-size: 52px; font-variant-numeric: tabular-nums; line-height: 1; }
-.hero-figure .pct { color: var(--accent); font-family: var(--font-mono); font-size: 17px; }
-.hero-detail { flex: 1; min-width: 180px; }
-.hero-detail .label { color: var(--fg-muted); font-size: 13px; margin-bottom: 8px; }
-.hero-track { height: 8px; border-radius: 99px; background: var(--panel-raised); border: 1px solid var(--border); overflow: hidden; }
-.hero-track > span { display: block; height: 100%; background: linear-gradient(90deg, var(--accent), #6fe0cf); border-radius: 99px; }
-.rail { margin-top: 28px; position: relative; }
-.rail::before { content: ""; position: absolute; left: 19px; top: 8px; bottom: 8px; width: 2px; background: var(--border); }
-.milestone { position: relative; padding-left: 48px; margin-bottom: 10px; }
+.tab-btn:hover { color: var(--fg); background: var(--panel-raised); }
+.tab-btn.active-core  { background:var(--panel); border-color:var(--border); color:var(--accent); border-bottom-color:var(--panel); }
+.tab-btn.active-rag   { background:var(--panel); border-color:var(--border); color:var(--accent2); border-bottom-color:var(--panel); }
+.tab-btn.active-dash  { background:var(--panel); border-color:var(--border); color:var(--accent3); border-bottom-color:var(--panel); }
+.tab-dot { width:6px; height:6px; border-radius:50%; display:inline-block; margin-right:6px; vertical-align:middle; }
+.dot-core { background:var(--accent); }
+.dot-rag  { background:var(--accent2); }
+.dot-dash { background:var(--accent3); }
+.tab-panel { display:none; }
+.tab-panel.visible { display:block; }
+/* ── hero summary ── */
+.hero { margin-top:24px; background:var(--panel); border:1px solid var(--border); border-radius:16px; padding:24px; display:flex; gap:24px; align-items:center; flex-wrap:wrap; }
+.hero-figure { display:flex; align-items:baseline; gap:6px; white-space:nowrap; }
+.hero-figure .num { font-family:var(--font-display); font-weight:600; font-size:52px; font-variant-numeric:tabular-nums; line-height:1; }
+.hero-figure .pct { font-family:var(--font-mono); font-size:17px; }
+.pct-core { color:var(--accent); }
+.pct-rag  { color:var(--accent2); }
+.pct-dash { color:var(--accent3); }
+.hero-detail { flex:1; min-width:180px; }
+.hero-detail .label { color:var(--fg-muted); font-size:13px; margin-bottom:8px; }
+.hero-track { height:8px; border-radius:99px; background:var(--panel-raised); border:1px solid var(--border); overflow:hidden; }
+.hero-track > span { display:block; height:100%; border-radius:99px; }
+.track-core { background: linear-gradient(90deg, var(--accent), #6fe0cf); }
+.track-rag  { background: linear-gradient(90deg, var(--accent2), #a8bfff); }
+.track-dash { background: linear-gradient(90deg, var(--accent3), #f0a87a); }
+/* ── rail / milestones ── */
+.rail { margin-top:24px; position:relative; }
+.rail::before { content:""; position:absolute; left:19px; top:8px; bottom:8px; width:2px; background:var(--border); }
+.milestone { position:relative; padding-left:48px; margin-bottom:10px; }
 .milestone .node {
-  position: absolute; left: 0; top: 14px; width: 40px; height: 40px; border-radius: 50%;
-  background: var(--panel); border: 2px solid var(--border); display: grid; place-items: center;
-  font-family: var(--font-mono); font-weight: 600; font-size: 11px; color: var(--fg-muted); z-index: 1;
+  position:absolute; left:0; top:14px; width:40px; height:40px; border-radius:50%;
+  background:var(--panel); border:2px solid var(--border); display:grid; place-items:center;
+  font-family:var(--font-mono); font-weight:600; font-size:11px; color:var(--fg-muted); z-index:1;
 }
-.milestone.done .node { border-color: var(--ok); color: var(--ok); background: var(--ok-soft); }
-.milestone.active .node { border-color: var(--accent); color: var(--accent); background: var(--accent-soft); }
-.ms-card { border: 1px solid var(--border); background: var(--panel); border-radius: 14px; overflow: hidden; }
-.ms-head { cursor: pointer; list-style: none; padding: 14px 16px; display: flex; align-items: center; gap: 12px; }
-.ms-head::-webkit-details-marker { display: none; }
-.chev { color: var(--fg-faint); transition: transform 0.15s ease; flex: none; }
-.ms-card[open] .chev { transform: rotate(90deg); }
-.ms-name { font-weight: 600; flex: 1; min-width: 0; }
-.ms-meta { display: flex; align-items: center; gap: 10px; flex: none; }
-.ms-count { font-family: var(--font-mono); font-size: 12.5px; color: var(--fg-muted); white-space: nowrap; }
-.pill {
-  font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.03em; padding: 3px 9px; border-radius: 99px;
-  text-transform: uppercase; white-space: nowrap;
-}
-.pill.done { background: var(--ok-soft); color: var(--ok); }
-.pill.active { background: var(--warn-soft); color: var(--warn); }
-.pill.todo { background: var(--panel-raised); color: var(--fg-faint); border: 1px solid var(--border); }
-.ms-track { height: 5px; margin: 0 16px 14px; border-radius: 99px; background: var(--panel-raised); overflow: hidden; }
-.ms-track > span { display: block; height: 100%; border-radius: 99px; background: var(--accent); }
-.ms-card.done .ms-track > span { background: var(--ok); }
-.req-list { list-style: none; margin: 0; padding: 0 16px 16px; display: flex; flex-direction: column; gap: 8px; }
-.req-list li {
-  display: flex; gap: 10px; align-items: flex-start; font-size: 13.5px; padding: 8px 10px; border-radius: 9px;
-  background: var(--panel-raised); border: 1px solid var(--border);
-}
-.req-list li.todo { color: var(--fg-muted); }
-.req-list li.plain { color: var(--fg-muted); background: transparent; border: none; padding: 2px 10px; }
-.check { flex: none; width: 17px; height: 17px; border-radius: 5px; display: grid; place-items: center; font-size: 11px; margin-top: 1px; }
-.check.yes { background: var(--ok-soft); color: var(--ok); }
-.check.no { border: 1.5px solid var(--fg-faint); }
-.req-list li.plain .check { border: none; }
-code { font-family: var(--font-mono); background: var(--panel-raised); border: 1px solid var(--border); padding: 0 4px; border-radius: 4px; font-size: 0.9em; }
-.parking { margin-top: 28px; border: 1px solid var(--border); border-radius: 12px; background: var(--panel); padding: 14px 16px; }
-.parking summary { cursor: pointer; list-style: none; display: flex; align-items: center; gap: 10px; }
-.parking summary::-webkit-details-marker { display: none; }
-.parking[open] .chev { transform: rotate(90deg); }
-.parking-title { font-weight: 600; color: var(--fg-muted); font-size: 13.5px; }
-.parking ul { margin: 12px 0 0; padding-left: 20px; color: var(--fg-muted); font-size: 13px; }
-footer {
-  margin-top: 28px; padding-top: 16px; border-top: 1px solid var(--border); color: var(--fg-faint);
-  font-size: 12px; display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap;
-}
-@media (max-width: 480px) { .ms-meta { flex-wrap: wrap; justify-content: flex-end; } }
+.milestone.done   .node { border-color:var(--ok);      color:var(--ok);      background:var(--ok-soft); }
+.milestone.active .node.node-core { border-color:var(--accent);  color:var(--accent);  background:var(--accent-soft); }
+.milestone.active .node.node-rag  { border-color:var(--accent2); color:var(--accent2); background:var(--accent2-soft); }
+.milestone.active .node.node-dash { border-color:var(--accent3); color:var(--accent3); background:var(--accent3-soft); }
+.ms-card { border:1px solid var(--border); background:var(--panel); border-radius:14px; overflow:hidden; }
+.ms-head { cursor:pointer; list-style:none; padding:14px 16px; display:flex; align-items:center; gap:12px; }
+.ms-head::-webkit-details-marker { display:none; }
+.chev { color:var(--fg-faint); transition:transform 0.15s ease; flex:none; }
+.ms-card[open] .chev { transform:rotate(90deg); }
+.ms-name { font-weight:600; flex:1; min-width:0; }
+.ms-meta { display:flex; align-items:center; gap:10px; flex:none; }
+.ms-count { font-family:var(--font-mono); font-size:12.5px; color:var(--fg-muted); white-space:nowrap; }
+.pill { font-family:var(--font-mono); font-size:11px; letter-spacing:0.03em; padding:3px 9px; border-radius:99px; text-transform:uppercase; white-space:nowrap; }
+.pill.done   { background:var(--ok-soft);           color:var(--ok); }
+.pill.active { background:var(--warn-soft);          color:var(--warn); }
+.pill.todo   { background:var(--panel-raised);       color:var(--fg-faint); border:1px solid var(--border); }
+.ms-track { height:5px; margin:0 16px 14px; border-radius:99px; background:var(--panel-raised); overflow:hidden; }
+.ms-track > span { display:block; height:100%; border-radius:99px; background:var(--accent); }
+.ms-card.done .ms-track > span { background:var(--ok); }
+.ms-card.rag  .ms-track > span { background:var(--accent2); }
+.req-list { list-style:none; margin:0; padding:0 16px 16px; display:flex; flex-direction:column; gap:8px; }
+.req-list li { display:flex; gap:10px; align-items:flex-start; font-size:13.5px; padding:8px 10px; border-radius:9px; background:var(--panel-raised); border:1px solid var(--border); }
+.req-list li.todo   { color:var(--fg-muted); }
+.req-list li.plain  { color:var(--fg-muted); background:transparent; border:none; padding:2px 10px; }
+.check { flex:none; width:17px; height:17px; border-radius:5px; display:grid; place-items:center; font-size:11px; margin-top:1px; }
+.check.yes { background:var(--ok-soft); color:var(--ok); }
+.check.no  { border:1.5px solid var(--fg-faint); }
+.req-list li.plain .check { border:none; }
+code { font-family:var(--font-mono); background:var(--panel-raised); border:1px solid var(--border); padding:0 4px; border-radius:4px; font-size:0.9em; }
+/* ── parking / footer ── */
+.parking { margin-top:24px; border:1px solid var(--border); border-radius:12px; background:var(--panel); padding:14px 16px; }
+.parking summary { cursor:pointer; list-style:none; display:flex; align-items:center; gap:10px; }
+.parking summary::-webkit-details-marker { display:none; }
+.parking[open] .chev { transform:rotate(90deg); }
+.parking-title { font-weight:600; color:var(--fg-muted); font-size:13.5px; }
+.parking ul { margin:12px 0 0; padding-left:20px; color:var(--fg-muted); font-size:13px; }
+footer { margin-top:24px; padding-top:16px; border-top:1px solid var(--border); color:var(--fg-faint); font-size:12px; display:flex; justify-content:space-between; gap:12px; flex-wrap:wrap; }
+/* not-started banner */
+.not-started-banner { margin-top:32px; border:1px dashed var(--border); border-radius:14px; padding:32px 24px; text-align:center; color:var(--fg-faint); }
+.not-started-banner .big { font-family:var(--font-display); font-size:20px; color:var(--fg-muted); margin-bottom:8px; }
+@media (max-width:480px) { .ms-meta { flex-wrap:wrap; justify-content:flex-end; } }
 </style>
-</head>
-<body>
-<div class="wrap">
-  <p class="eyebrow">jobabai · apps/core-api</p>
-  <h1>Core API Build Tracker</h1>
-  <p class="subtitle">Scoped to <code>apps/core-api</code> only — rag-engine and jobabai-dashboard are added
-  here once that work starts. Generated directly from <code>PROGRESS.md</code>, never hand-edited: re-run
-  <code>node scripts/generate-progress-html.mjs</code> after updating it.</p>
 
-  <div class="hero">
-    <div class="hero-figure"><span class="num">95/113</span><span class="pct">84%</span></div>
-    <div class="hero-detail">
-      <div class="label">Requirements verified with a passing, named test</div>
-      <div class="hero-track"><span style="width:84%"></span></div>
-    </div>
+<div class="wrap">
+  <p class="eyebrow">jobabai · apps/</p>
+  <h1>Build Tracker</h1>
+  <p class="subtitle">All three apps tracked here. Switch tabs to see each service. Source of truth is <code>PROGRESS.md</code>.</p>
+
+  <div class="tabs" role="tablist">
+    <button class="tab-btn" role="tab" data-tab="core" onclick="switchTab('core')">
+      <span class="tab-dot dot-core"></span>Core API
+    </button>
+    <button class="tab-btn" role="tab" data-tab="rag" onclick="switchTab('rag')">
+      <span class="tab-dot dot-rag"></span>RAG Engine
+    </button>
+    <button class="tab-btn" role="tab" data-tab="dash" onclick="switchTab('dash')">
+      <span class="tab-dot dot-dash"></span>Client
+    </button>
   </div>
 
-  <div class="rail">
-    <div class="milestone active">
-      <div class="node">PRE</div>
-      <details class="ms-card active" open id="section-0">
-        <summary class="ms-head">
-          <span class="chev"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 6 15 12 9 18"></polyline></svg></span>
-          <span class="ms-name">Prerequisites and planning</span>
-          <span class="ms-meta"><span class="ms-count">3/8</span><span class="pill active">In progress</span></span>
-        </summary>
-        <div class="ms-track"><span style="width:38%"></span></div>
-        <ul class="req-list">
+  <!-- ══════════════════════════════════════════════════════════
+       TAB 1 — CORE API
+  ══════════════════════════════════════════════════════════ -->
+  <div class="tab-panel" id="tab-core">
+    <div class="hero">
+      <div class="hero-figure"><span class="num">95/113</span><span class="pct pct-core">84%</span></div>
+      <div class="hero-detail">
+        <div class="label">Requirements verified — <code>apps/core-api</code></div>
+        <div class="hero-track"><span class="track-core" style="width:84%"></span></div>
+      </div>
+    </div>
+
+    <div class="rail">
+      <div class="milestone active">
+        <div class="node node-core">PRE</div>
+        <details class="ms-card active" id="c0">
+          <summary class="ms-head"><span class="chev"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 6 15 12 9 18"></polyline></svg></span><span class="ms-name">Prerequisites and planning</span><span class="ms-meta"><span class="ms-count">3/8</span><span class="pill active">In progress</span></span></summary>
+          <div class="ms-track"><span style="width:38%"></span></div>
+          <ul class="req-list">
             <li class="done"><span class="check yes">✓</span><span>GitHub monorepo created with <code>apps/core-api</code>, <code>apps/rag-engine</code>, <code>apps/jobabai-dashboard</code> and <code>docs/</code></span></li>
             <li class="done"><span class="check yes">✓</span><span>Planning docs 00 to 16 written</span></li>
             <li class="done"><span class="check yes">✓</span><span>Core API PRD written (<code>docs/17-core-api-prd.md</code>)</span></li>
@@ -162,272 +188,227 @@ footer {
             <li class="todo"><span class="check no"></span><span>Meta developer app and test Page created (Messenger product added)</span></li>
             <li class="todo"><span class="check no"></span><span>Google Cloud project with Sheets API enabled and OAuth client created (redirect URI set)</span></li>
             <li class="todo"><span class="check no"></span><span>Railway project created with <code>staging</code> and <code>production</code> environments</span></li>
-            <li class="todo"><span class="check no"></span><span>OpenAI key created with a hard monthly spend limit (needed when the rag-engine starts, not for the core API)</span></li>
-        </ul>
-      </details>
-    </div>
+            <li class="todo"><span class="check no"></span><span>OpenAI key created with a hard monthly spend limit</span></li>
+          </ul>
+        </details>
+      </div>
 
-    <div class="milestone done">
-      <div class="node">M0</div>
-      <details class="ms-card done" id="section-1">
-        <summary class="ms-head">
-          <span class="chev"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 6 15 12 9 18"></polyline></svg></span>
-          <span class="ms-name">M0 Scaffold</span>
-          <span class="ms-meta"><span class="ms-count">8/8</span><span class="pill done">Done</span></span>
-        </summary>
-        <div class="ms-track"><span style="width:100%"></span></div>
-        <ul class="req-list">
+      <div class="milestone done">
+        <div class="node node-core">M0</div>
+        <details class="ms-card done" id="c1">
+          <summary class="ms-head"><span class="chev"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 6 15 12 9 18"></polyline></svg></span><span class="ms-name">M0 Scaffold</span><span class="ms-meta"><span class="ms-count">8/8</span><span class="pill done">Done</span></span></summary>
+          <div class="ms-track"><span style="width:100%"></span></div>
+          <ul class="req-list">
             <li class="done"><span class="check yes">✓</span><span>M0-1 <code>package.json</code> with scripts: <code>dev</code>, <code>build</code>, <code>start</code>, <code>test</code>, <code>lint</code>, <code>format</code> (M)</span></li>
             <li class="done"><span class="check yes">✓</span><span>M0-2 TypeScript <code>strict: true</code> config (M)</span></li>
             <li class="done"><span class="check yes">✓</span><span>M0-3 ESLint and Prettier configured and passing (M)</span></li>
             <li class="done"><span class="check yes">✓</span><span>M0-4 Vitest, supertest, mongodb-memory-server and msw installed, one sample test passes (M)</span></li>
             <li class="done"><span class="check yes">✓</span><span>M0-5 Folder structure from PRD section 6.1 created (M)</span></li>
-            <li class="done"><span class="check yes">✓</span><span>M0-6 <code>.env.example</code> lists every variable from PRD section 7 with placeholders only (M)</span></li>
+            <li class="done"><span class="check yes">✓</span><span>M0-6 <code>.env.example</code> lists every variable with placeholders only (M)</span></li>
             <li class="done"><span class="check yes">✓</span><span>M0-7 First commit on the <code>staging</code> branch (M)</span></li>
-            <li class="done"><span class="check yes">✓</span><span>Checkpoint M0: <code>npm run lint</code>, <code>npm run build</code>, <code>npm test</code> all pass on a clean checkout</span></li>
-        </ul>
-      </details>
-    </div>
+            <li class="done"><span class="check yes">✓</span><span>Checkpoint M0: lint, build, test all pass on a clean checkout</span></li>
+          </ul>
+        </details>
+      </div>
 
-    <div class="milestone active">
-      <div class="node">M1</div>
-      <details class="ms-card active" open id="section-2">
-        <summary class="ms-head">
-          <span class="chev"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 6 15 12 9 18"></polyline></svg></span>
-          <span class="ms-name">M1 Foundation</span>
-          <span class="ms-meta"><span class="ms-count">11/13</span><span class="pill active">In progress</span></span>
-        </summary>
-        <div class="ms-track"><span style="width:85%"></span></div>
-        <ul class="req-list">
-            <li class="done"><span class="check yes">✓</span><span>FND-1 <code>config/env.ts</code> validates all env vars with Zod and the app refuses to boot on a bad value (M)</span></li>
+      <div class="milestone active">
+        <div class="node node-core">M1</div>
+        <details class="ms-card active" id="c2">
+          <summary class="ms-head"><span class="chev"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 6 15 12 9 18"></polyline></svg></span><span class="ms-name">M1 Foundation</span><span class="ms-meta"><span class="ms-count">11/13</span><span class="pill active">In progress</span></span></summary>
+          <div class="ms-track"><span style="width:85%"></span></div>
+          <ul class="req-list">
+            <li class="done"><span class="check yes">✓</span><span>FND-1 <code>config/env.ts</code> validates all env vars with Zod, app refuses to boot on bad value (M)</span></li>
             <li class="done"><span class="check yes">✓</span><span>FND-2 <code>lib/db.ts</code> connects to Mongo and creates every index in PRD section 9 (M)</span></li>
-            <li class="done"><span class="check yes">✓</span><span>FND-3 <code>lib/logger.ts</code>, request id middleware and <code>pino-http</code> with secret redaction and masked phone numbers (M)</span></li>
-            <li class="done"><span class="check yes">✓</span><span>FND-4 <code>lib/errors.ts</code> typed errors and <code>error-handler</code> returning <code>{ error: { code, message } }</code> (M)</span></li>
-            <li class="done"><span class="check yes">✓</span><span>FND-5 <code>app.ts</code> and <code>server.ts</code> split, helmet, CORS allowlist, 100 KB body limit, trust proxy (M)</span></li>
-            <li class="done"><span class="check yes">✓</span><span>FND-6 General rate limiter in place (M)</span></li>
-            <li class="done"><span class="check yes">✓</span><span>FND-7 <code>lib/crypto.ts</code> AES-256-GCM encrypt and decrypt with round trip and tamper tests (M)</span></li>
+            <li class="done"><span class="check yes">✓</span><span>FND-3 <code>lib/logger.ts</code>, request id middleware, pino-http with secret redaction (M)</span></li>
+            <li class="done"><span class="check yes">✓</span><span>FND-4 <code>lib/errors.ts</code> typed errors and <code>error-handler</code> (M)</span></li>
+            <li class="done"><span class="check yes">✓</span><span>FND-5 <code>app.ts</code> and <code>server.ts</code> split, helmet, CORS, 100 KB body limit, trust proxy (M)</span></li>
+            <li class="done"><span class="check yes">✓</span><span>FND-6 General rate limiter (M)</span></li>
+            <li class="done"><span class="check yes">✓</span><span>FND-7 <code>lib/crypto.ts</code> AES-256-GCM with round trip and tamper tests (M)</span></li>
             <li class="done"><span class="check yes">✓</span><span>FND-8 Graceful shutdown on SIGTERM (M)</span></li>
-            <li class="done"><span class="check yes">✓</span><span>FND-9 <code>scripts/stub-rag-engine.ts</code> returns canned <code>/embed</code>, <code>/respond</code>, <code>/risk-score</code>, <code>/health</code> (M)</span></li>
-            <li class="done"><span class="check yes">✓</span><span>HLT-1 <code>GET /health</code> returns 200 with no dependencies (M)</span></li>
+            <li class="done"><span class="check yes">✓</span><span>FND-9 <code>scripts/stub-rag-engine.ts</code> canned responses (M)</span></li>
+            <li class="done"><span class="check yes">✓</span><span>HLT-1 <code>GET /health</code> returns 200 (M)</span></li>
             <li class="done"><span class="check yes">✓</span><span>HLT-2 <code>GET /health/deps</code> reports Mongo and rag-engine status (M)</span></li>
-            <li class="todo"><span class="check no"></span><span>FND-10 Deployed to Railway staging, <code>/health</code> returns 200 over the public URL (M) — blocked: Railway project not created yet (see Prerequisites)</span></li>
-            <li class="todo"><span class="check no"></span><span>Checkpoint M1: error shape consistent on 400, 404, 500 and bad JSON; app boots only with valid env; deployed to staging — blocked on FND-10 only, everything else verified</span></li>
-        </ul>
-      </details>
-    </div>
+            <li class="todo"><span class="check no"></span><span>FND-10 Deployed to Railway staging — blocked: Railway not created yet</span></li>
+            <li class="todo"><span class="check no"></span><span>Checkpoint M1: deployed to staging — blocked on FND-10 only</span></li>
+          </ul>
+        </details>
+      </div>
 
-    <div class="milestone active">
-      <div class="node">M2</div>
-      <details class="ms-card active" open id="section-3">
-        <summary class="ms-head">
-          <span class="chev"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 6 15 12 9 18"></polyline></svg></span>
-          <span class="ms-name">M2 Auth and Seller</span>
-          <span class="ms-meta"><span class="ms-count">14/15</span><span class="pill active">In progress</span></span>
-        </summary>
-        <div class="ms-track"><span style="width:93%"></span></div>
-        <ul class="req-list">
-            <li class="done"><span class="check yes">✓</span><span>AUTH-1 Register validates, lowercases email, hashes password, creates seller (M)</span></li>
+      <div class="milestone active">
+        <div class="node node-core">M2</div>
+        <details class="ms-card active" id="c3">
+          <summary class="ms-head"><span class="chev"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 6 15 12 9 18"></polyline></svg></span><span class="ms-name">M2 Auth and Seller</span><span class="ms-meta"><span class="ms-count">14/15</span><span class="pill active">In progress</span></span></summary>
+          <div class="ms-track"><span style="width:93%"></span></div>
+          <ul class="req-list">
+            <li class="done"><span class="check yes">✓</span><span>AUTH-1 Register validates, lowercases email, hashes password (M)</span></li>
             <li class="done"><span class="check yes">✓</span><span>AUTH-2 Invite code enforced when <code>REGISTRATION_MODE=invite</code> (M)</span></li>
             <li class="done"><span class="check yes">✓</span><span>AUTH-3 Duplicate email returns 409 (M)</span></li>
-            <li class="done"><span class="check yes">✓</span><span>AUTH-4 Login returns JWT, all failures return the same 401 (M)</span></li>
-            <li class="done"><span class="check yes">✓</span><span>AUTH-5 <code>auth-guard</code> verifies JWT, loads seller, rejects suspended sellers, sets <code>req.sellerId</code> (M)</span></li>
+            <li class="done"><span class="check yes">✓</span><span>AUTH-4 Login returns JWT (M)</span></li>
+            <li class="done"><span class="check yes">✓</span><span>AUTH-5 <code>auth-guard</code> verifies JWT, rejects suspended sellers (M)</span></li>
             <li class="done"><span class="check yes">✓</span><span>AUTH-6 Login and register rate limits (M)</span></li>
-            <li class="done"><span class="check yes">✓</span><span>AUTH-7 Passwords and hashes never in logs or responses (M)</span></li>
-            <li class="done"><span class="check yes">✓</span><span>SEL-1 <code>GET /seller/me</code> returns profile with no secret fields (M)</span></li>
-            <li class="done"><span class="check yes">✓</span><span>SEL-2 <code>POST /seller/connect-facebook</code> validates token against Graph API, encrypts and stores it (M)</span></li>
-            <li class="done"><span class="check yes">✓</span><span>SEL-3 Page already connected to another seller returns 409 (M)</span></li>
-            <li class="done"><span class="check yes">✓</span><span>SEL-4 App subscribed to the Page after connect, <code>webhookSubscribed</code> recorded (M)</span></li>
-            <li class="done"><span class="check yes">✓</span><span>SEL-5 <code>DELETE /seller/connect-facebook</code> unsubscribes and clears fields (S)</span></li>
+            <li class="done"><span class="check yes">✓</span><span>AUTH-7 Passwords never in logs or responses (M)</span></li>
+            <li class="done"><span class="check yes">✓</span><span>SEL-1 <code>GET /seller/me</code> no secret fields (M)</span></li>
+            <li class="done"><span class="check yes">✓</span><span>SEL-2 <code>POST /seller/connect-facebook</code> validates and encrypts token (M)</span></li>
+            <li class="done"><span class="check yes">✓</span><span>SEL-3 Page already connected returns 409 (M)</span></li>
+            <li class="done"><span class="check yes">✓</span><span>SEL-4 App subscribed to Page after connect (M)</span></li>
+            <li class="done"><span class="check yes">✓</span><span>SEL-5 <code>DELETE /seller/connect-facebook</code> unsubscribes (S)</span></li>
             <li class="done"><span class="check yes">✓</span><span>SEL-6 <code>PATCH /seller/me</code> with whitelisted fields (S)</span></li>
             <li class="done"><span class="check yes">✓</span><span>SEL-7 <code>GET /seller/connect-sheets/url</code> with signed state (M)</span></li>
-            <li class="todo"><span class="check no"></span><span>Checkpoint M2: register, login, <code>/seller/me</code> and Page connect work end to end against a real test Page; first isolation test file exists — isolation test file exists and all logic is tested (Graph API mocked with msw); blocked only on a real Meta test Page to verify end to end</span></li>
-        </ul>
-      </details>
-    </div>
+            <li class="todo"><span class="check no"></span><span>Checkpoint M2: blocked on a real Meta test Page</span></li>
+          </ul>
+        </details>
+      </div>
 
-    <div class="milestone done">
-      <div class="node">M3</div>
-      <details class="ms-card done" id="section-4">
-        <summary class="ms-head">
-          <span class="chev"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 6 15 12 9 18"></polyline></svg></span>
-          <span class="ms-name">M3 Catalog</span>
-          <span class="ms-meta"><span class="ms-count">10/10</span><span class="pill done">Done</span></span>
-        </summary>
-        <div class="ms-track"><span style="width:100%"></span></div>
-        <ul class="req-list">
+      <div class="milestone done">
+        <div class="node node-core">M3</div>
+        <details class="ms-card done" id="c4">
+          <summary class="ms-head"><span class="chev"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 6 15 12 9 18"></polyline></svg></span><span class="ms-name">M3 Catalog</span><span class="ms-meta"><span class="ms-count">10/10</span><span class="pill done">Done</span></span></summary>
+          <div class="ms-track"><span style="width:100%"></span></div>
+          <ul class="req-list">
             <li class="done"><span class="check yes">✓</span><span>CAT-1 Create, read, list, update, delete scoped by <code>sellerId</code> (M)</span></li>
             <li class="done"><span class="check yes">✓</span><span>CAT-2 Zod validation with bounds (M)</span></li>
-            <li class="done"><span class="check yes">✓</span><span>CAT-3 Embed call after every create and update, Mongo write never rolled back (M)</span></li>
-            <li class="done"><span class="check yes">✓</span><span>CAT-4 <code>embedStatus</code> tracked as synced or failed and returned to the seller (M)</span></li>
-            <li class="done"><span class="check yes">✓</span><span>CAT-5 Delete removes Mongo doc then calls vector removal, failure logged (M)</span></li>
+            <li class="done"><span class="check yes">✓</span><span>CAT-3 Embed call after every create/update, Mongo write never rolled back (M)</span></li>
+            <li class="done"><span class="check yes">✓</span><span>CAT-4 <code>embedStatus</code> tracked as synced or failed (M)</span></li>
+            <li class="done"><span class="check yes">✓</span><span>CAT-5 Delete removes Mongo doc then calls vector removal (M)</span></li>
             <li class="done"><span class="check yes">✓</span><span>CAT-6 <code>POST /catalog/:id/reembed</code> (S)</span></li>
-            <li class="done"><span class="check yes">✓</span><span>CAT-7 <code>POST /catalog/import</code> bulk JSON import with bounded concurrency (S)</span></li>
+            <li class="done"><span class="check yes">✓</span><span>CAT-7 <code>POST /catalog/import</code> bulk JSON import (S)</span></li>
             <li class="done"><span class="check yes">✓</span><span>CAT-8 Pagination on list (M)</span></li>
             <li class="done"><span class="check yes">✓</span><span>CAT-9 <code>nameLower</code> maintained for order-time matching (M)</span></li>
-            <li class="done"><span class="check yes">✓</span><span>Checkpoint M3: add, edit, delete a product via the API with the stub; malformed entry rejected; seller B cannot see seller A's products</span></li>
-        </ul>
-      </details>
-    </div>
+            <li class="done"><span class="check yes">✓</span><span>Checkpoint M3</span></li>
+          </ul>
+        </details>
+      </div>
 
-    <div class="milestone active">
-      <div class="node">M4</div>
-      <details class="ms-card active" open id="section-5">
-        <summary class="ms-head">
-          <span class="chev"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 6 15 12 9 18"></polyline></svg></span>
-          <span class="ms-name">M4 Webhook pipe</span>
-          <span class="ms-meta"><span class="ms-count">6/7</span><span class="pill active">In progress</span></span>
-        </summary>
-        <div class="ms-track"><span style="width:86%"></span></div>
-        <ul class="req-list">
+      <div class="milestone active">
+        <div class="node node-core">M4</div>
+        <details class="ms-card active" id="c5">
+          <summary class="ms-head"><span class="chev"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 6 15 12 9 18"></polyline></svg></span><span class="ms-name">M4 Webhook pipe</span><span class="ms-meta"><span class="ms-count">6/7</span><span class="pill active">In progress</span></span></summary>
+          <div class="ms-track"><span style="width:86%"></span></div>
+          <ul class="req-list">
             <li class="done"><span class="check yes">✓</span><span>WH-1 Handshake with constant-time verify token compare (M)</span></li>
-            <li class="done"><span class="check yes">✓</span><span>WH-2 Signature verified on the raw body, bad signature returns 401 (M)</span></li>
-            <li class="done"><span class="check yes">✓</span><span>WH-3 Duplicate <code>mid</code> processed once (<code>webhook_events</code>) (M)</span></li>
-            <li class="done"><span class="check yes">✓</span><span>WH-4 Seller resolved by Page id, unknown or suspended Page ignored with 200 (M)</span></li>
+            <li class="done"><span class="check yes">✓</span><span>WH-2 Signature verified on raw body, bad signature returns 401 (M)</span></li>
+            <li class="done"><span class="check yes">✓</span><span>WH-3 Duplicate <code>mid</code> processed once (M)</span></li>
+            <li class="done"><span class="check yes">✓</span><span>WH-4 Seller resolved by Page id (M)</span></li>
             <li class="done"><span class="check yes">✓</span><span>WH-5 Valid-signature requests always get 200 (M)</span></li>
             <li class="done"><span class="check yes">✓</span><span>Per-Page webhook rate limit (M)</span></li>
-            <li class="todo"><span class="check no"></span><span>Checkpoint M4: a real message from the test Page appears in staging logs within seconds; a request with a bad signature is rejected with 401 — bad-signature rejection verified by test; the real-Page half is blocked on a Meta test Page + staging deploy (see Prerequisites)</span></li>
-        </ul>
-      </details>
-    </div>
+            <li class="todo"><span class="check no"></span><span>Checkpoint M4: blocked on Meta test Page + staging deploy</span></li>
+          </ul>
+        </details>
+      </div>
 
-    <div class="milestone active">
-      <div class="node">M5</div>
-      <details class="ms-card active" open id="section-6">
-        <summary class="ms-head">
-          <span class="chev"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 6 15 12 9 18"></polyline></svg></span>
-          <span class="ms-name">M5 Reply loop</span>
-          <span class="ms-meta"><span class="ms-count">11/12</span><span class="pill active">In progress</span></span>
-        </summary>
-        <div class="ms-track"><span style="width:92%"></span></div>
-        <ul class="req-list">
-            <li class="done"><span class="check yes">✓</span><span><code>lib/rag-engine-client.ts</code> with timeouts, one retry, Zod-validated responses, internal token header (M)</span></li>
-            <li class="done"><span class="check yes">✓</span><span><code>lib/meta-client.ts</code> Send API wrapper, failures logged not thrown (M)</span></li>
+      <div class="milestone active">
+        <div class="node node-core">M5</div>
+        <details class="ms-card active" id="c6">
+          <summary class="ms-head"><span class="chev"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 6 15 12 9 18"></polyline></svg></span><span class="ms-name">M5 Reply loop</span><span class="ms-meta"><span class="ms-count">11/12</span><span class="pill active">In progress</span></span></summary>
+          <div class="ms-track"><span style="width:92%"></span></div>
+          <ul class="req-list">
+            <li class="done"><span class="check yes">✓</span><span><code>lib/rag-engine-client.ts</code> timeouts, retry, Zod-validated responses (M)</span></li>
+            <li class="done"><span class="check yes">✓</span><span><code>lib/meta-client.ts</code> Send API wrapper (M)</span></li>
             <li class="done"><span class="check yes">✓</span><span>CONV-1 Conversation upsert and rolling message window (M)</span></li>
             <li class="done"><span class="check yes">✓</span><span>CONV-2 Idle messages go to <code>/respond</code>, order intent detected (M)</span></li>
-            <li class="done"><span class="check yes">✓</span><span>CONV-10 Assistant replies appended to the window (M)</span></li>
-            <li class="done"><span class="check yes">✓</span><span>CONV-11 Only the stored window is sent as history (M)</span></li>
-            <li class="done"><span class="check yes">✓</span><span>WH-6 Fallback message sent when the AI path fails (M)</span></li>
-            <li class="done"><span class="check yes">✓</span><span>WH-7 Send API uses <code>messaging_type: RESPONSE</code>, Meta errors logged with code (M)</span></li>
-            <li class="done"><span class="check yes">✓</span><span>WH-8 Per-event processing stays under 15 seconds (M)</span></li>
-            <li class="done"><span class="check yes">✓</span><span>WH-9 Non-text messages get the canned reply (S)</span></li>
-            <li class="todo"><span class="check no"></span><span>WH-10 Typing indicator before the AI call (C)</span></li>
-            <li class="done"><span class="check yes">✓</span><span>Checkpoint M5: with the stub, a message to the test Page gets a reply back in Messenger; with the stub stopped, the fallback reply is sent; duplicate delivery produces one reply</span></li>
-        </ul>
-      </details>
-    </div>
+            <li class="done"><span class="check yes">✓</span><span>CONV-10 Assistant replies appended to window (M)</span></li>
+            <li class="done"><span class="check yes">✓</span><span>CONV-11 Only stored window sent as history (M)</span></li>
+            <li class="done"><span class="check yes">✓</span><span>WH-6 Fallback message when AI path fails (M)</span></li>
+            <li class="done"><span class="check yes">✓</span><span>WH-7 Send API uses <code>messaging_type: RESPONSE</code> (M)</span></li>
+            <li class="done"><span class="check yes">✓</span><span>WH-8 Per-event processing under 15 seconds (M)</span></li>
+            <li class="done"><span class="check yes">✓</span><span>WH-9 Non-text messages get canned reply (S)</span></li>
+            <li class="todo"><span class="check no"></span><span>WH-10 Typing indicator before AI call (C)</span></li>
+            <li class="done"><span class="check yes">✓</span><span>Checkpoint M5</span></li>
+          </ul>
+        </details>
+      </div>
 
-    <div class="milestone done">
-      <div class="node">M6</div>
-      <details class="ms-card done" id="section-7">
-        <summary class="ms-head">
-          <span class="chev"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 6 15 12 9 18"></polyline></svg></span>
-          <span class="ms-name">M6 Order flow (conversation state machine)</span>
-          <span class="ms-meta"><span class="ms-count">8/8</span><span class="pill done">Done</span></span>
-        </summary>
-        <div class="ms-track"><span style="width:100%"></span></div>
-        <ul class="req-list">
-            <li class="done"><span class="check yes">✓</span><span>CONV-3 Field extraction merges across messages, multi-field messages handled, no re-asking filled fields (M)</span></li>
+      <div class="milestone done">
+        <div class="node node-core">M6</div>
+        <details class="ms-card done" id="c7">
+          <summary class="ms-head"><span class="chev"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 6 15 12 9 18"></polyline></svg></span><span class="ms-name">M6 Order flow (state machine)</span><span class="ms-meta"><span class="ms-count">8/8</span><span class="pill done">Done</span></span></summary>
+          <div class="ms-track"><span style="width:100%"></span></div>
+          <ul class="req-list">
+            <li class="done"><span class="check yes">✓</span><span>CONV-3 Field extraction merges across messages (M)</span></li>
             <li class="done"><span class="check yes">✓</span><span>CONV-4 Deterministic missing-field prompts (M)</span></li>
             <li class="done"><span class="check yes">✓</span><span>CONV-5 Phone format check with one re-ask (M)</span></li>
-            <li class="done"><span class="check yes">✓</span><span>CONV-6 Summary and &quot;reply YES to confirm&quot; step (M)</span></li>
-            <li class="done"><span class="check yes">✓</span><span>CONV-7 Confirm, cancel and correction handling in <code>awaiting_confirmation</code> (M)</span></li>
-            <li class="done"><span class="check yes">✓</span><span>CONV-8 Stale drafts (30 minutes) discarded (M)</span></li>
-            <li class="done"><span class="check yes">✓</span><span>CONV-9 Cancel phrase clears the draft at any point (S)</span></li>
-            <li class="done"><span class="check yes">✓</span><span>Checkpoint M6: &quot;I want to order&quot; walks through all five fields live; all fields in one message does not re-ask; wrong phone is asked about once</span></li>
-        </ul>
-      </details>
-    </div>
+            <li class="done"><span class="check yes">✓</span><span>CONV-6 Summary and "reply YES to confirm" (M)</span></li>
+            <li class="done"><span class="check yes">✓</span><span>CONV-7 Confirm, cancel, correction in <code>awaiting_confirmation</code> (M)</span></li>
+            <li class="done"><span class="check yes">✓</span><span>CONV-8 Stale drafts (30 min) discarded (M)</span></li>
+            <li class="done"><span class="check yes">✓</span><span>CONV-9 Cancel phrase clears draft at any point (S)</span></li>
+            <li class="done"><span class="check yes">✓</span><span>Checkpoint M6</span></li>
+          </ul>
+        </details>
+      </div>
 
-    <div class="milestone active">
-      <div class="node">M7</div>
-      <details class="ms-card active" open id="section-8">
-        <summary class="ms-head">
-          <span class="chev"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 6 15 12 9 18"></polyline></svg></span>
-          <span class="ms-name">M7 Sheets integration</span>
-          <span class="ms-meta"><span class="ms-count">7/9</span><span class="pill active">In progress</span></span>
-        </summary>
-        <div class="ms-track"><span style="width:78%"></span></div>
-        <ul class="req-list">
-            <li class="todo"><span class="check no"></span><span>SHT-1 Minimum OAuth scope confirmed against the real Sheets API (M) — <code>drive.file</code> requested; needs a real Google OAuth client to verify sufficiency</span></li>
+      <div class="milestone active">
+        <div class="node node-core">M7</div>
+        <details class="ms-card active" id="c8">
+          <summary class="ms-head"><span class="chev"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 6 15 12 9 18"></polyline></svg></span><span class="ms-name">M7 Sheets integration</span><span class="ms-meta"><span class="ms-count">7/9</span><span class="pill active">In progress</span></span></summary>
+          <div class="ms-track"><span style="width:78%"></span></div>
+          <ul class="req-list">
+            <li class="todo"><span class="check no"></span><span>SHT-1 Minimum OAuth scope confirmed — needs real Google OAuth client</span></li>
             <li class="done"><span class="check yes">✓</span><span>SHT-2 Signed <code>state</code> verified on callback (M)</span></li>
-            <li class="done"><span class="check yes">✓</span><span>SHT-3 Callback stores encrypted refresh token and creates the &quot;jobabai Orders&quot; sheet (M)</span></li>
+            <li class="done"><span class="check yes">✓</span><span>SHT-3 Callback stores encrypted refresh token and creates "jobabai Orders" sheet (M)</span></li>
             <li class="done"><span class="check yes">✓</span><span>SHT-4 <code>appendOrderRow</code> writes the agreed columns (M)</span></li>
-            <li class="done"><span class="check yes">✓</span><span>SHT-5 Revoked or expired grant becomes <code>SheetsAuthError</code>, no crash (M)</span></li>
-            <li class="done"><span class="check yes">✓</span><span>SHT-6 Idempotent append on retry (Order ID lookup) (M)</span></li>
-            <li class="done"><span class="check yes">✓</span><span>SHT-7 5 second timeout and one retry on Sheets calls (M)</span></li>
+            <li class="done"><span class="check yes">✓</span><span>SHT-5 Revoked/expired grant becomes <code>SheetsAuthError</code> (M)</span></li>
+            <li class="done"><span class="check yes">✓</span><span>SHT-6 Idempotent append on retry (M)</span></li>
+            <li class="done"><span class="check yes">✓</span><span>SHT-7 5s timeout and one retry on Sheets calls (M)</span></li>
             <li class="done"><span class="check yes">✓</span><span>SHT-8 Disconnect Google (C)</span></li>
-            <li class="todo"><span class="check no"></span><span>Checkpoint M7: OAuth completed with your own Google account, a test row lands in the real Sheet within seconds — blocked on a real Google OAuth client (see Prerequisites); all logic verified with mocked Google APIs</span></li>
-        </ul>
-      </details>
-    </div>
+            <li class="todo"><span class="check no"></span><span>Checkpoint M7: blocked on real Google OAuth client</span></li>
+          </ul>
+        </details>
+      </div>
 
-    <div class="milestone active">
-      <div class="node">M8</div>
-      <details class="ms-card active" open id="section-9">
-        <summary class="ms-head">
-          <span class="chev"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 6 15 12 9 18"></polyline></svg></span>
-          <span class="ms-name">M8 Orders</span>
-          <span class="ms-meta"><span class="ms-count">10/11</span><span class="pill active">In progress</span></span>
-        </summary>
-        <div class="ms-track"><span style="width:91%"></span></div>
-        <ul class="req-list">
-            <li class="done"><span class="check yes">✓</span><span>ORD-1 Creation sequence: risk (fail-soft), Mongo insert, Sheets (fail-soft) (M)</span></li>
+      <div class="milestone active">
+        <div class="node node-core">M8</div>
+        <details class="ms-card active" id="c9">
+          <summary class="ms-head"><span class="chev"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 6 15 12 9 18"></polyline></svg></span><span class="ms-name">M8 Orders</span><span class="ms-meta"><span class="ms-count">10/11</span><span class="pill active">In progress</span></span></summary>
+          <div class="ms-track"><span style="width:91%"></span></div>
+          <ul class="req-list">
+            <li class="done"><span class="check yes">✓</span><span>ORD-1 Creation: risk (fail-soft), Mongo insert, Sheets (fail-soft) (M)</span></li>
             <li class="done"><span class="check yes">✓</span><span>ORD-2 Risk failure never blocks an order (M)</span></li>
-            <li class="done"><span class="check yes">✓</span><span>ORD-3 Sheets failure never loses an order, <code>sheetRowWritten</code> stays false (M)</span></li>
+            <li class="done"><span class="check yes">✓</span><span>ORD-3 Sheets failure never loses an order (M)</span></li>
             <li class="done"><span class="check yes">✓</span><span>ORD-4 <code>GET /orders</code> and <code>GET /orders/:id</code> scoped and paginated (M)</span></li>
-            <li class="done"><span class="check yes">✓</span><span>ORD-5 Every risk flag has a human readable reason (M)</span></li>
+            <li class="done"><span class="check yes">✓</span><span>ORD-5 Every risk flag has human-readable reason (M)</span></li>
             <li class="done"><span class="check yes">✓</span><span>ORD-6 <code>PATCH /orders/:id/status</code> (S)</span></li>
-            <li class="done"><span class="check yes">✓</span><span>ORD-7 <code>retry-sheet</code> and <code>retry-sheets</code> endpoints (M)</span></li>
-            <li class="done"><span class="check yes">✓</span><span>ORD-8 Background retry job, single instance, no overlap (S)</span></li>
-            <li class="done"><span class="check yes">✓</span><span>ORD-9 Seller without a Sheet still gets orders saved, retry job skips them (M)</span></li>
+            <li class="done"><span class="check yes">✓</span><span>ORD-7 Retry-sheet and retry-sheets endpoints (M)</span></li>
+            <li class="done"><span class="check yes">✓</span><span>ORD-8 Background retry job, no overlap (S)</span></li>
+            <li class="done"><span class="check yes">✓</span><span>ORD-9 Seller without Sheet still gets orders saved (M)</span></li>
             <li class="done"><span class="check yes">✓</span><span>ORD-10 Quantity and text bounds enforced (M)</span></li>
-            <li class="todo"><span class="check no"></span><span>Checkpoint M8: live order lands in Mongo and the Sheet; with the Google token revoked the order is still saved and flagged, and the retry later writes it exactly once — blocked on real Google OAuth client (same as M7 checkpoint)</span></li>
-        </ul>
-      </details>
-    </div>
+            <li class="todo"><span class="check no"></span><span>Checkpoint M8: blocked on real Google OAuth client</span></li>
+          </ul>
+        </details>
+      </div>
 
-    <div class="milestone active">
-      <div class="node">M9</div>
-      <details class="ms-card active" open id="section-10">
-        <summary class="ms-head">
-          <span class="chev"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 6 15 12 9 18"></polyline></svg></span>
-          <span class="ms-name">M9 Hardening</span>
-          <span class="ms-meta"><span class="ms-count">7/9</span><span class="pill active">In progress</span></span>
-        </summary>
-        <div class="ms-track"><span style="width:78%"></span></div>
-        <ul class="req-list">
-            <li class="done"><span class="check yes">✓</span><span>Isolation suite covers every seller-scoped route, plus the route-list meta test (M) — seller/me, catalog, orders; GET by id returns 404 not 403 on cross-seller access</span></li>
-            <li class="done"><span class="check yes">✓</span><span>Failure-injection tests: rag-engine timeout and 500, embed failure, risk failure, Sheets failure, duplicate <code>mid</code> (M)</span></li>
-            <li class="done"><span class="check yes">✓</span><span>Rate limits verified by tests (M) — auth endpoints in auth-rate-limit.test.ts; per-Page webhook limit in webhook.test.ts</span></li>
-            <li class="done"><span class="check yes">✓</span><span><code>15-security.md</code> items for this service all checked (M) — seller isolation, HMAC signature verification, encrypted tokens at rest, Zod validation on all inputs, rate limiting all verified via tests</span></li>
-            <li class="done"><span class="check yes">✓</span><span><code>.env.example</code> re-read for real secrets before the release commit (M) — only placeholder values, confirmed</span></li>
-            <li class="done"><span class="check yes">✓</span><span><code>npm audit</code> clean of high and critical findings in production dependencies (M) — body-parser high fixed; 2 critical are devDep-only (tinypool via vitest, fix requires vitest@5 major upgrade); zod high CVE targets v4 only (we're on v3.25.76)</span></li>
-            <li class="done"><span class="check yes">✓</span><span>Every Must requirement has a test that names its ID (M)</span></li>
-            <li class="todo"><span class="check no"></span><span>Production environment deployed and verified with your own test Page (M) — blocked on Railway + Meta Page credentials</span></li>
-            <li class="todo"><span class="check no"></span><span>Checkpoint M9: Definition of done in PRD section 18 fully satisfied — blocked on production deploy</span></li>
-        </ul>
-      </details>
-    </div>
+      <div class="milestone active">
+        <div class="node node-core">M9</div>
+        <details class="ms-card active" id="c10">
+          <summary class="ms-head"><span class="chev"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 6 15 12 9 18"></polyline></svg></span><span class="ms-name">M9 Hardening</span><span class="ms-meta"><span class="ms-count">7/9</span><span class="pill active">In progress</span></span></summary>
+          <div class="ms-track"><span style="width:78%"></span></div>
+          <ul class="req-list">
+            <li class="done"><span class="check yes">✓</span><span>Isolation suite covers every seller-scoped route (M)</span></li>
+            <li class="done"><span class="check yes">✓</span><span>Failure-injection tests: rag-engine, embed, risk, Sheets, duplicate mid (M)</span></li>
+            <li class="done"><span class="check yes">✓</span><span>Rate limits verified by tests (M)</span></li>
+            <li class="done"><span class="check yes">✓</span><span><code>15-security.md</code> items all checked (M)</span></li>
+            <li class="done"><span class="check yes">✓</span><span><code>.env.example</code> re-read, only placeholder values (M)</span></li>
+            <li class="done"><span class="check yes">✓</span><span><code>npm audit</code> clean of high/critical in production deps (M)</span></li>
+            <li class="done"><span class="check yes">✓</span><span>Every Must requirement has a named test (M)</span></li>
+            <li class="todo"><span class="check no"></span><span>Production environment deployed — blocked on Railway + Meta credentials</span></li>
+            <li class="todo"><span class="check no"></span><span>Checkpoint M9: Definition of done fully satisfied</span></li>
+          </ul>
+        </details>
+      </div>
 
-    <div class="milestone todo">
-      <div class="node">RAG</div>
-      <details class="ms-card todo" id="section-11">
-        <summary class="ms-head">
-          <span class="chev"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 6 15 12 9 18"></polyline></svg></span>
-          <span class="ms-name">Integration with the real rag-engine</span>
-          <span class="ms-meta"><span class="ms-count">0/3</span><span class="pill todo">Not started</span></span>
-        </summary>
-        <div class="ms-track"><span style="width:0%"></span></div>
-        <ul class="req-list">
+      <div class="milestone todo">
+        <div class="node">INT</div>
+        <details class="ms-card todo" id="c11">
+          <summary class="ms-head"><span class="chev"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 6 15 12 9 18"></polyline></svg></span><span class="ms-name">Integration with real rag-engine</span><span class="ms-meta"><span class="ms-count">0/3</span><span class="pill todo">Not started</span></span></summary>
+          <div class="ms-track"><span style="width:0%"></span></div>
+          <ul class="req-list">
             <li class="todo"><span class="check no"></span><span>Response contract tests pass against the real Python service on staging (M)</span></li>
             <li class="todo"><span class="check no"></span><span>Private networking confirmed: rag-engine has no reachable public domain (M)</span></li>
-            <li class="todo"><span class="check no"></span><span>Live exit test from <code>05-scope.md</code> section 7: question, grounded answer, order, Sheet row with risk flag (M)</span></li>
-        </ul>
-      </details>
+            <li class="todo"><span class="check no"></span><span>Live exit test: question, grounded answer, order, Sheet row with risk flag (M)</span></li>
+          </ul>
+        </details>
+      </div>
     </div>
-  </div>
 
-  
     <details class="parking">
       <summary><span class="chev"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 6 15 12 9 18"></polyline></svg></span><span class="parking-title">Parking lot — Phase 3+, not in the MVP</span></summary>
       <ul>
@@ -435,17 +416,151 @@ footer {
         <li>Human handoff inbox</li>
         <li>Meta OAuth login flow for connecting Pages</li>
         <li>Refresh tokens and multi-user seller accounts</li>
-        <li>Repeat-cancellation risk rules (needs a full order cycle of data)</li>
+        <li>Repeat-cancellation risk rules</li>
         <li>Message queue for bulk catalog re-embedding</li>
         <li>Sentry integration</li>
         <li>Automated billing</li>
       </ul>
     </details>
 
-  <footer>
-    <span>Source: <code>PROGRESS.md</code></span>
-    <span>Last synced: 2026-10-18</span>
-  </footer>
+    <footer><span>Source: <code>PROGRESS.md</code></span><span>Last synced: 2026-10-30</span></footer>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════════
+       TAB 2 — RAG ENGINE
+  ══════════════════════════════════════════════════════════ -->
+  <div class="tab-panel" id="tab-rag">
+    <div class="hero">
+      <div class="hero-figure"><span class="num">0/30</span><span class="pct pct-rag">0%</span></div>
+      <div class="hero-detail">
+        <div class="label">Requirements verified — <code>apps/rag-engine</code> (Python / FastAPI)</div>
+        <div class="hero-track"><span class="track-rag" style="width:0%"></span></div>
+      </div>
+    </div>
+
+    <div class="rail">
+      <div class="milestone todo">
+        <div class="node node-rag">M0</div>
+        <details class="ms-card rag" id="r0">
+          <summary class="ms-head"><span class="chev"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 6 15 12 9 18"></polyline></svg></span><span class="ms-name">RE-M0 Scaffold</span><span class="ms-meta"><span class="ms-count">0/8</span><span class="pill todo">Not started</span></span></summary>
+          <div class="ms-track"><span style="width:0%"></span></div>
+          <ul class="req-list">
+            <li class="todo"><span class="check no"></span><span>RE-M0-1 <code>pyproject.toml</code>: fastapi, uvicorn[standard], openai, qdrant-client, pydantic-settings, structlog — dev: pytest, pytest-asyncio, httpx</span></li>
+            <li class="todo"><span class="check no"></span><span>RE-M0-2 <code>config/settings.py</code>: Pydantic BaseSettings, all env vars validated, app refuses to start on missing value</span></li>
+            <li class="todo"><span class="check no"></span><span>RE-M0-3 <code>middleware/auth.py</code>: FastAPI <code>Depends</code> checking <code>X-Internal-Token</code> header, returns 401 on mismatch</span></li>
+            <li class="todo"><span class="check no"></span><span>RE-M0-4 <code>main.py</code>: app factory, router mounts, global auth dependency, <code>/docs</code> only when <code>ENABLE_DOCS=true</code>, structured logging</span></li>
+            <li class="todo"><span class="check no"></span><span>RE-M0-5 <code>GET /health</code> → <code>{"status":"ok","service":"rag-engine"}</code> — no auth, zero external calls</span></li>
+            <li class="todo"><span class="check no"></span><span>RE-M0-6 <code>.env.example</code>: OPENAI_API_KEY, QDRANT_URL, QDRANT_API_KEY, QDRANT_COLLECTION_NAME, RAG_ENGINE_INTERNAL_TOKEN, PORT, LOG_LEVEL, OPENAI_EMBEDDING_MODEL, OPENAI_CHAT_MODEL, TOP_K, ENABLE_DOCS</span></li>
+            <li class="todo"><span class="check no"></span><span>RE-M0-7 <code>tests/conftest.py</code> + <code>tests/test_health.py</code>: health returns 200, missing token returns 401 on protected route</span></li>
+            <li class="todo"><span class="check no"></span><span>Checkpoint RE-M0: <code>pytest</code> passes, app boots with valid env, refuses on missing vars</span></li>
+          </ul>
+        </details>
+      </div>
+
+      <div class="milestone todo">
+        <div class="node node-rag">M1</div>
+        <details class="ms-card rag" id="r1">
+          <summary class="ms-head"><span class="chev"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 6 15 12 9 18"></polyline></svg></span><span class="ms-name">RE-M1 Embed Endpoint</span><span class="ms-meta"><span class="ms-count">0/8</span><span class="pill todo">Not started</span></span></summary>
+          <div class="ms-track"><span style="width:0%"></span></div>
+          <ul class="req-list">
+            <li class="todo"><span class="check no"></span><span>RE-M1-1 Pydantic models: <code>EmbedRequest {sellerId, productId, name, description?, faqEntries?}</code> → <code>EmbedResponse {chunksEmbedded: int}</code></span></li>
+            <li class="todo"><span class="check no"></span><span>RE-M1-2 <code>lib/chunker.py</code>: paragraph-level chunker for name + description + FAQ entries</span></li>
+            <li class="todo"><span class="check no"></span><span>RE-M1-3 <code>lib/openai_client.py</code>: async <code>embed_texts(texts)</code> using <code>text-embedding-3-small</code></span></li>
+            <li class="todo"><span class="check no"></span><span>RE-M1-4 <code>lib/qdrant_client.py</code>: <code>ensure_collection()</code> idempotent, <code>upsert_vectors()</code>, <code>delete_by_product()</code> — sellerId always in payload</span></li>
+            <li class="todo"><span class="check no"></span><span>RE-M1-5 <code>POST /embed</code>: chunk → embed → upsert Qdrant → return <code>{chunksEmbedded: N}</code></span></li>
+            <li class="todo"><span class="check no"></span><span>RE-M1-6 <code>DELETE /embed/{productId}?sellerId=</code>: delete all vectors matching sellerId+productId</span></li>
+            <li class="todo"><span class="check no"></span><span>RE-M1-7 <code>tests/test_embed.py</code>: happy path (mock OpenAI + Qdrant), empty description, FAQ-only, delete removes vectors</span></li>
+            <li class="todo"><span class="check no"></span><span>Checkpoint RE-M1: all embed tests pass; Qdrant collection created idempotently on startup</span></li>
+          </ul>
+        </details>
+      </div>
+
+      <div class="milestone todo">
+        <div class="node node-rag">M2</div>
+        <details class="ms-card rag" id="r2">
+          <summary class="ms-head"><span class="chev"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 6 15 12 9 18"></polyline></svg></span><span class="ms-name">RE-M2 Respond Endpoint</span><span class="ms-meta"><span class="ms-count">0/8</span><span class="pill todo">Not started</span></span></summary>
+          <div class="ms-track"><span style="width:0%"></span></div>
+          <ul class="req-list">
+            <li class="todo"><span class="check no"></span><span>RE-M2-1 Pydantic models: <code>RespondRequest {sellerId, customerPsid, message, history[{role, text}]}</code> → <code>RespondResponse {reply, orderIntentDetected, extractedFields?}</code></span></li>
+            <li class="todo"><span class="check no"></span><span>RE-M2-2 <code>qdrant_client.search(sellerId, query_vector, top_k)</code>: <strong>must</strong> filter by sellerId payload, top-k=4 default</span></li>
+            <li class="todo"><span class="check no"></span><span>RE-M2-3 <code>lib/prompt_builder.py</code>: system prompt ("answer only from provided catalog context; say honestly if not in context"), inject chunks + history + question</span></li>
+            <li class="todo"><span class="check no"></span><span>RE-M2-4 <code>openai_client.chat(messages)</code>: GPT-4o-mini call, JSON mode for structured order intent response</span></li>
+            <li class="todo"><span class="check no"></span><span>RE-M2-5 <code>POST /respond</code>: embed query → Qdrant search (sellerId-filtered) → build prompt → OpenAI → return typed response</span></li>
+            <li class="todo"><span class="check no"></span><span>RE-M2-6 F5 grounding: system prompt contains "never invent prices or products not in context" — test: no chunks → no hallucination</span></li>
+            <li class="todo"><span class="check no"></span><span>RE-M2-7 <code>tests/test_respond.py</code>: grounded reply, no-context reply, order intent detected, OpenAI failure returns null-equivalent</span></li>
+            <li class="todo"><span class="check no"></span><span>Checkpoint RE-M2: all respond tests pass including F5 grounding test</span></li>
+          </ul>
+        </details>
+      </div>
+
+      <div class="milestone todo">
+        <div class="node node-rag">M3</div>
+        <details class="ms-card rag" id="r3">
+          <summary class="ms-head"><span class="chev"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 6 15 12 9 18"></polyline></svg></span><span class="ms-name">RE-M3 Risk-Score Endpoint</span><span class="ms-meta"><span class="ms-count">0/5</span><span class="pill todo">Not started</span></span></summary>
+          <div class="ms-track"><span style="width:0%"></span></div>
+          <ul class="req-list">
+            <li class="todo"><span class="check no"></span><span>RE-M3-1 Pydantic models: <code>RiskScoreRequest {sellerId, product, quantity, customerName, phone, address}</code> → <code>RiskScoreResponse {riskFlags[{code, reason}], riskScore}</code></span></li>
+            <li class="todo"><span class="check no"></span><span>RE-M3-2 <code>lib/risk_rules.py</code>: <code>malformed_phone</code> (BD regex <code>^01[3-9]\d{8}$</code>), <code>high_quantity</code> (&gt;10 COD), <code>suspicious_address</code> (too vague)</span></li>
+            <li class="todo"><span class="check no"></span><span>RE-M3-3 <code>POST /risk-score</code>: run all rules, aggregate flags, compute score (flags/total), return</span></li>
+            <li class="todo"><span class="check no"></span><span>RE-M3-4 <code>tests/test_risk_score.py</code>: valid BD phone passes, malformed flagged, high quantity flagged, clean order = empty flags</span></li>
+            <li class="todo"><span class="check no"></span><span>Checkpoint RE-M3: all risk-score tests pass; no external dependencies needed</span></li>
+          </ul>
+        </details>
+      </div>
+
+      <div class="milestone todo">
+        <div class="node node-rag">M4</div>
+        <details class="ms-card rag" id="r4">
+          <summary class="ms-head"><span class="chev"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 6 15 12 9 18"></polyline></svg></span><span class="ms-name">RE-M4 Hardening &amp; Integration</span><span class="ms-meta"><span class="ms-count">0/6</span><span class="pill todo">Not started</span></span></summary>
+          <div class="ms-track"><span style="width:0%"></span></div>
+          <ul class="req-list">
+            <li class="todo"><span class="check no"></span><span>RE-M4-1 <code>pip-audit</code> clean of high/critical in production deps</span></li>
+            <li class="todo"><span class="check no"></span><span>RE-M4-2 <code>Dockerfile</code> (python:3.12-slim, non-root user, no dev deps) + <code>railway.toml</code> (start command, health check)</span></li>
+            <li class="todo"><span class="check no"></span><span>RE-M4-3 Contract tests: run real rag-engine on staging, validate against core-api's Zod schemas</span></li>
+            <li class="todo"><span class="check no"></span><span>RE-M4-4 Private networking: rag-engine has no public domain in Railway production</span></li>
+            <li class="todo"><span class="check no"></span><span>RE-M4-5 Live exit test: message test Page → grounded answer → order → Sheet row with risk flag</span></li>
+            <li class="todo"><span class="check no"></span><span>Checkpoint RE-M4: all 3 integration items in PROGRESS.md ticked; production deployed</span></li>
+          </ul>
+        </details>
+      </div>
+    </div>
+
+    <footer><span>Source: <code>docs/07-rag-engine-adr.md</code> + plan</span><span>Last synced: 2026-10-30</span></footer>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════════
+       TAB 3 — CLIENT DASHBOARD
+  ══════════════════════════════════════════════════════════ -->
+  <div class="tab-panel" id="tab-dash">
+    <div class="hero">
+      <div class="hero-figure"><span class="num">0/1</span><span class="pct pct-dash">0%</span></div>
+      <div class="hero-detail">
+        <div class="label">Requirements verified — <code>apps/jobabai-dashboard</code></div>
+        <div class="hero-track"><span class="track-dash" style="width:0%"></span></div>
+      </div>
+    </div>
+    <div class="not-started-banner">
+      <p class="big">Phase 4 — Not yet started</p>
+      <p>The seller dashboard starts after the Google Sheet becomes a bottleneck for sellers.<br>
+      Google Sheets is the interim dashboard by design during the pilot. This tab tracks progress once work begins.</p>
+    </div>
+    <footer><span>Source: <code>PROGRESS.md</code> Phase 4 note</span><span>Last synced: 2026-10-30</span></footer>
+  </div>
 </div>
-</body>
-</html>
+
+<script>
+function switchTab(tab) {
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('visible'));
+  document.querySelectorAll('.tab-btn').forEach(b => b.className = 'tab-btn');
+  document.getElementById('tab-' + tab).classList.add('visible');
+  const btn = document.querySelector('[data-tab="' + tab + '"]');
+  btn.classList.add('active-' + tab);
+  try { localStorage.setItem('jb_active_tab', tab); } catch(_) {}
+}
+(function init() {
+  let tab = 'core';
+  try { tab = localStorage.getItem('jb_active_tab') || 'core'; } catch(_) {}
+  if (!['core','rag','dash'].includes(tab)) tab = 'core';
+  switchTab(tab);
+})();
+</script>
