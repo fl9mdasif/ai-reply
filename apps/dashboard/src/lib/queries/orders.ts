@@ -34,3 +34,11 @@ export function useUpdateOrderStatus() {
     onSuccess: () => qc.invalidateQueries({ queryKey: ['orders'] }),
   });
 }
+
+export function useRetrySheets() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (orderId: string) => api.post(`/orders/${orderId}/retry-sheet`, {}),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ['orders'] }),
+  });
+}
