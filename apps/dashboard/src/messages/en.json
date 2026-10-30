@@ -1,0 +1,42 @@
+{
+  "auth": {
+    "login": "Login",
+    "register": "Register",
+    "email": "Email",
+    "password": "Password",
+    "businessName": "Business Name",
+    "loginTitle": "Welcome back",
+    "loginSubtitle": "Sign in to your jobabai dashboard",
+    "registerTitle": "Create your account",
+    "registerSubtitle": "Start your free trial today",
+    "noAccount": "Don't have an account?",
+    "hasAccount": "Already have an account?",
+    "loggingIn": "Signing in...",
+    "registering": "Creating account...",
+    "inviteCode": "Invite Code (optional)"
+  },
+  "nav": {
+    "overview": "Overview",
+    "catalog": "Catalog",
+    "orders": "Orders",
+    "conversations": "Conversations",
+    "integrations": "Integrations",
+    "settings": "Settings",
+    "sellers": "Sellers",
+    "adminOrders": "All Orders",
+    "stats": "Stats",
+    "inviteCodes": "Invite Codes",
+    "health": "Health"
+  },
+  "common": {
+    "loading": "Loading...",
+    "error": "Something went wrong",
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "add": "Add",
+    "search": "Search",
+    "logout": "Logout"
+  }
+}

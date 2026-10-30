@@ -1,0 +1,42 @@
+{
+  "auth": {
+    "login": "লগইন",
+    "register": "নিবন্ধন",
+    "email": "ইমেইল",
+    "password": "পাসওয়ার্ড",
+    "businessName": "ব্যবসার নাম",
+    "loginTitle": "স্বাগতম",
+    "loginSubtitle": "আপনার jobabai ড্যাশবোর্ডে সাইন ইন করুন",
+    "registerTitle": "অ্যাকাউন্ট তৈরি করুন",
+    "registerSubtitle": "আজই ফ্রি ট্রায়াল শুরু করুন",
+    "noAccount": "অ্যাকাউন্ট নেই?",
+    "hasAccount": "ইতিমধ্যে অ্যাকাউন্ট আছে?",
+    "loggingIn": "সাইন ইন হচ্ছে...",
+    "registering": "অ্যাকাউন্ট তৈরি হচ্ছে...",
+    "inviteCode": "ইনভাইট কোড (ঐচ্ছিক)"
+  },
+  "nav": {
+    "overview": "সারসংক্ষেপ",
+    "catalog": "পণ্য তালিকা",
+    "orders": "অর্ডার",
+    "conversations": "কথোপকথন",
+    "integrations": "সংযোগ",
+    "settings": "সেটিংস",
+    "sellers": "বিক্রেতা",
+    "adminOrders": "সব অর্ডার",
+    "stats": "পরিসংখ্যান",
+    "inviteCodes": "ইনভাইট কোড",
+    "health": "সার্ভার স্ট্যাটাস"
+  },
+  "common": {
+    "loading": "লোড হচ্ছে...",
+    "error": "কিছু একটা সমস্যা হয়েছে",
+    "save": "সংরক্ষণ",
+    "cancel": "বাতিল",
+    "delete": "মুছুন",
+    "edit": "সম্পাদনা",
+    "add": "যোগ করুন",
+    "search": "খুঁজুন",
+    "logout": "লগআউট"
+  }
+}

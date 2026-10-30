@@ -1,0 +1,27 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --bg: #F8F7FF;
+  --sidebar: #FFFFFF;
+  --border: #EDE9FE;
+  --text: #09090B;
+  --text-muted: #6B7280;
+  --accent: #7D39EB;
+  --accent-light: #F3F0FF;
+  --lime: #C6FF33;
+  --confirmed: #22C55E;
+  --risk: #EF4444;
+  --pending: #F59E0B;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-sans, system-ui, sans-serif);
+}
+
+* {
+  box-sizing: border-box;
+}
