@@ -36,6 +36,7 @@ describe('Seller isolation', () => {
       email: `seller-a-${Date.now()}@example.com`,
       passwordHash: 'unused-in-this-test-file',
       status: 'active',
+      role: 'seller',
       plan: 'pilot',
       webhookSubscribed: false,
       createdAt: now,
@@ -46,14 +47,15 @@ describe('Seller isolation', () => {
       email: `seller-b-${Date.now()}@example.com`,
       passwordHash: 'unused-in-this-test-file',
       status: 'active',
+      role: 'seller',
       plan: 'pilot',
       webhookSubscribed: false,
       createdAt: now,
       updatedAt: now,
     });
 
-    tokenA = signSellerToken(sellerA._id.toString());
-    tokenB = signSellerToken(sellerB._id.toString());
+    tokenA = signSellerToken(sellerA._id.toString(), 'seller');
+    tokenB = signSellerToken(sellerB._id.toString(), 'seller');
   });
 
   afterAll(async () => {
@@ -125,6 +127,7 @@ describe('Seller isolation', () => {
       email: `seller-c-orders-${Date.now()}@example.com`,
       passwordHash: 'unused',
       status: 'active',
+      role: 'seller',
       plan: 'pilot',
       webhookSubscribed: false,
       createdAt: now,
@@ -135,13 +138,14 @@ describe('Seller isolation', () => {
       email: `seller-d-orders-${Date.now()}@example.com`,
       passwordHash: 'unused',
       status: 'active',
+      role: 'seller',
       plan: 'pilot',
       webhookSubscribed: false,
       createdAt: now,
       updatedAt: now,
     });
-    const tokenC = signSellerToken(sellerC._id.toString());
-    const tokenD = signSellerToken(sellerD._id.toString());
+    const tokenC = signSellerToken(sellerC._id.toString(), 'seller');
+    const tokenD = signSellerToken(sellerD._id.toString(), 'seller');
 
     const orderC = await insertOrder({
       sellerId: sellerC._id.toString(),
@@ -183,6 +187,7 @@ describe('Seller isolation', () => {
       email: `seller-e-${Date.now()}@example.com`,
       passwordHash: 'unused',
       status: 'active',
+      role: 'seller',
       plan: 'pilot',
       webhookSubscribed: false,
       createdAt: now,
@@ -193,12 +198,13 @@ describe('Seller isolation', () => {
       email: `seller-f-${Date.now()}@example.com`,
       passwordHash: 'unused',
       status: 'active',
+      role: 'seller',
       plan: 'pilot',
       webhookSubscribed: false,
       createdAt: now,
       updatedAt: now,
     });
-    const tokenF = signSellerToken(sellerF._id.toString());
+    const tokenF = signSellerToken(sellerF._id.toString(), 'seller');
 
     const orderE = await insertOrder({
       sellerId: sellerE._id.toString(),

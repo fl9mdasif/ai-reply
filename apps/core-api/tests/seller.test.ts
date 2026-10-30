@@ -45,13 +45,14 @@ describe('M2 Seller', () => {
       email: `${businessName.toLowerCase().replace(/\s+/g, '-')}-${Date.now()}-${Math.random().toString(36).slice(2)}@example.com`,
       passwordHash: 'unused-in-this-test-file',
       status: 'active',
+      role: 'seller',
       plan: 'pilot',
       webhookSubscribed: false,
       createdAt: now,
       updatedAt: now,
     });
     const id = seller._id.toString();
-    return { sellerId: id, token: signSellerToken(id) };
+    return { sellerId: id, token: signSellerToken(id, 'seller') };
   }
 
   beforeEach(async () => {

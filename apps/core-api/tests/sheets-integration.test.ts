@@ -50,12 +50,13 @@ describe('M7 Sheets integration', () => {
       email: `${businessName.toLowerCase().replace(/\s+/g, '-')}-${Date.now()}@example.com`,
       passwordHash: 'unused',
       status: 'active',
+      role: 'seller',
       plan: 'pilot',
       webhookSubscribed: false,
       createdAt: now,
       updatedAt: now,
     });
-    return { sellerId: seller._id.toString(), token: signSellerToken(seller._id.toString()) };
+    return { sellerId: seller._id.toString(), token: signSellerToken(seller._id.toString(), 'seller') };
   }
 
   it('SHT-2: the callback rejects a tampered or missing state with 403', async () => {

@@ -8,6 +8,7 @@ export interface SellerDoc {
   email: string;
   passwordHash: string;
   status: 'active' | 'suspended';
+  role: 'seller' | 'admin';
   plan: string;
   facebookPageId?: string;
   facebookPageName?: string;
@@ -161,6 +162,20 @@ export function ordersCollection() {
 
 export function webhookEventsCollection() {
   return getDb().collection<WebhookEventDoc>('webhook_events');
+}
+
+export interface InviteCodeDoc {
+  _id: ObjectId;
+  code: string;
+  note?: string;
+  createdBy: string;
+  usedBy?: string;
+  usedAt?: Date;
+  createdAt: Date;
+}
+
+export function inviteCodesCollection() {
+  return getDb().collection<InviteCodeDoc>('invite_codes');
 }
 
 export async function ensureIndexes(targetDb: Db): Promise<void> {

@@ -180,3 +180,12 @@ export async function riskScore(input: RiskScoreInput): Promise<RiskScoreResult>
     };
   }
 }
+
+export async function pingRagEngine(): Promise<boolean> {
+  try {
+    await ragEngineRequest({ method: 'GET', path: '/health', timeoutMs: 3000 });
+    return true;
+  } catch {
+    return false;
+  }
+}

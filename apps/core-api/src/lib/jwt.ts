@@ -3,10 +3,11 @@ import { env } from '../config/env.js';
 
 export interface SellerTokenPayload {
   sub: string;
+  role: 'seller' | 'admin';
 }
 
-export function signSellerToken(sellerId: string): string {
-  return jwt.sign({ sub: sellerId }, env.JWT_SECRET, {
+export function signSellerToken(sellerId: string, role: 'seller' | 'admin'): string {
+  return jwt.sign({ sub: sellerId, role }, env.JWT_SECRET, {
     expiresIn: env.JWT_EXPIRES_IN,
   } as jwt.SignOptions);
 }
@@ -16,7 +17,8 @@ export function verifySellerToken(token: string): SellerTokenPayload {
   if (typeof decoded === 'string' || typeof decoded.sub !== 'string') {
     throw new Error('Malformed token payload');
   }
-  return { sub: decoded.sub };
+  const role = decoded.role === 'admin' ? 'admin' : 'seller';
+  return { sub: decoded.sub, role };
 }
 
 // SEL-7 / SHT-2: a short-lived signed state carrying sellerId, used for the

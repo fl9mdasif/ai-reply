@@ -14,6 +14,8 @@ import { catalogRouter } from './modules/catalog/catalog.routes.js';
 import { webhookRouter } from './modules/webhook/webhook.routes.js';
 import { sheetsIntegrationRouter } from './modules/sheets-integration/sheets-integration.routes.js';
 import { orderRouter } from './modules/order/order.routes.js';
+import { conversationRouter } from './modules/conversation/conversation.routes.js';
+import { adminRouter } from './modules/admin/admin.routes.js';
 
 export function buildApp(): Express {
   const app = express();
@@ -55,6 +57,8 @@ export function buildApp(): Express {
   app.use(catalogRouter);
   app.use(sheetsIntegrationRouter);
   app.use(orderRouter);
+  app.use(conversationRouter);
+  app.use(adminRouter);
 
   app.use((req, res) => {
     res.status(404).json({ error: { code: 'NOT_FOUND', message: `No route for ${req.method} ${req.path}` } });

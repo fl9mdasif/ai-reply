@@ -6,6 +6,57 @@ import {
   type OrderDraft,
 } from '../../lib/db.js';
 
+export interface ConversationSummary {
+  _id: string;
+  customerPsid: string;
+  state: ConversationDoc['state'];
+  messageCount: number;
+  lastMessage?: { role: 'customer' | 'assistant'; text: string };
+  lastActivityAt: Date;
+}
+
+export async function listConversations(
+  sellerId: string,
+  limit: number,
+  cursor?: string,
+): Promise<{ conversations: ConversationSummary[]; nextCursor?: string }> {
+  const filter: Record<string, unknown> = { sellerId };
+  if (cursor) {
+    filter['lastActivityAt'] = { $lt: new Date(cursor) };
+  }
+
+  const docs = await conversationsCollection()
+    .find(filter)
+    .sort({ lastActivityAt: -1 })
+    .limit(limit + 1)
+    .toArray();
+
+  const hasMore = docs.length > limit;
+  const page = hasMore ? docs.slice(0, limit) : docs;
+
+  const conversations: ConversationSummary[] = page.map((doc) => ({
+    _id: doc._id.toString(),
+    customerPsid: doc.customerPsid,
+    state: doc.state,
+    messageCount: doc.messages.length,
+    lastMessage: doc.messages.length > 0 ? doc.messages[doc.messages.length - 1] : undefined,
+    lastActivityAt: doc.lastActivityAt,
+  }));
+
+  return {
+    conversations,
+    nextCursor: hasMore ? page[page.length - 1]!.lastActivityAt.toISOString() : undefined,
+  };
+}
+
+export async function findConversationById(
+  sellerId: string,
+  id: string,
+): Promise<ConversationDoc | null> {
+  if (!ObjectId.isValid(id)) return null;
+  return conversationsCollection().findOne({ _id: new ObjectId(id), sellerId });
+}
+
 // CONV-1: upserts by the unique (sellerId, customerPsid) index.
 export async function getOrCreateConversation(
   sellerId: string,

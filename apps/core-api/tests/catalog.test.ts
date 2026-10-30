@@ -42,12 +42,13 @@ describe('M3 Catalog', () => {
       email: `catalog-${Date.now()}-${Math.random().toString(36).slice(2)}@example.com`,
       passwordHash: 'unused-in-this-test-file',
       status: 'active',
+      role: 'seller',
       plan: 'pilot',
       webhookSubscribed: false,
       createdAt: now,
       updatedAt: now,
     });
-    token = signSellerToken(seller._id.toString());
+    token = signSellerToken(seller._id.toString(), 'seller');
   });
 
   afterEach(() => ragServer.resetHandlers());
@@ -97,12 +98,13 @@ describe('M3 Catalog', () => {
       email: `other-catalog-${Date.now()}@example.com`,
       passwordHash: 'unused',
       status: 'active',
+      role: 'seller',
       plan: 'pilot',
       webhookSubscribed: false,
       createdAt: now,
       updatedAt: now,
     });
-    const otherToken = signSellerToken(otherSeller._id.toString());
+    const otherToken = signSellerToken(otherSeller._id.toString(), 'seller');
     const otherAuth = { Authorization: `Bearer ${otherToken}` };
 
     const getAsOther = await request(app).get(`/catalog/${productId}`).set(otherAuth);

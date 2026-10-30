@@ -33,6 +33,7 @@ export async function register(input: RegisterInput): Promise<AuthResult> {
     email: input.email,
     passwordHash,
     status: 'active',
+    role: 'seller',
     plan: 'pilot',
     webhookSubscribed: false,
     createdAt: now,
@@ -40,7 +41,7 @@ export async function register(input: RegisterInput): Promise<AuthResult> {
   });
 
   const sellerId = seller._id.toString();
-  return { token: signSellerToken(sellerId), sellerId };
+  return { token: signSellerToken(sellerId, 'seller'), sellerId };
 }
 
 // AUTH-4
@@ -53,5 +54,5 @@ export async function login(input: LoginInput): Promise<AuthResult> {
   }
 
   const sellerId = seller._id.toString();
-  return { token: signSellerToken(sellerId), sellerId };
+  return { token: signSellerToken(sellerId, seller.role ?? 'seller'), sellerId };
 }

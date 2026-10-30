@@ -6,6 +6,7 @@ import { findSellerById } from '../modules/seller/seller.repo.js';
 declare module 'express-serve-static-core' {
   interface Request {
     sellerId: string;
+    sellerRole: 'seller' | 'admin';
   }
 }
 
@@ -29,6 +30,7 @@ export async function authGuard(req: Request, _res: Response, next: NextFunction
       return;
     }
     req.sellerId = payload.sub;
+    req.sellerRole = payload.role;
     next();
   } catch {
     next(new UnauthenticatedError());
