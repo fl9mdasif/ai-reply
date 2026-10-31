@@ -4,7 +4,7 @@ import { useState, FormEvent } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useTranslations } from 'next-intl';
-import { setToken } from '@/lib/auth';
+import { setToken, decodeToken } from '@/lib/auth';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:3000';
 
@@ -33,7 +33,9 @@ export default function LoginPage({ params }: { params: { locale: string } }) {
       }
       if (data.token) {
         setToken(data.token);
-        router.push(`/${params.locale}/seller`);
+        const payload = decodeToken(data.token);
+        const dest = payload?.role === 'admin' ? 'admin' : 'seller';
+        router.push(`/${params.locale}/${dest}`);
       }
     } catch {
       setError('Network error. Please try again.');
