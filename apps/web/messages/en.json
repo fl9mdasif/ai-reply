@@ -1,145 +1,487 @@
 {
+  "meta": {
+    "title": "jobabai — AI sales assistant for Facebook Messenger",
+    "description": "jobabai replies to every message on your Facebook Page, 24/7, in Bangla. It takes orders inside the chat and flags fake orders."
+  },
   "nav": {
     "features": "Features",
-    "pricing": "Pricing",
     "howItWorks": "How it works",
-    "contact": "Contact",
-    "cta": "Get Started",
-    "login": "Login",
-    "langToggle": "বাংলা"
+    "pricing": "Pricing",
+    "faq": "FAQ",
+    "login": "Log in",
+    "cta": "Start free",
+    "menuOpen": "Open menu",
+    "menuClose": "Close menu",
+    "home": "jobabai home"
+  },
+  "locale": {
+    "switchTo": "বাংলায় দেখুন",
+    "short": "বাংলা"
   },
   "hero": {
-    "headline": "Auto-reply for your Facebook store",
-    "subheadline": "jobabai answers product questions, collects COD orders, and screens fake orders — inside Facebook Messenger, automatically.",
-    "ctaPrimary": "Start Free Trial",
-    "ctaSecondary": "Watch Demo",
-    "badge": "Built for Bangladesh F-commerce"
+    "badge": "AI sales assistant for Facebook Messenger",
+    "headline": "AI answers every message on your Page,",
+    "headlineAccent": "and takes the order too",
+    "subheadline": "When a customer asks a price, the answer comes straight from your catalog. Then it collects name, phone and address and confirms the order. Even at 3 am, in Bangla.",
+    "ctaPrimary": "Start free",
+    "ctaSecondary": "See how it works",
+    "microcopy": [
+      "No credit card needed",
+      "Set up in 5 minutes",
+      "Cancel anytime"
+    ]
   },
-  "problem": {
-    "title": "Sound familiar?",
-    "cards": [
+  "chatMockup": {
+    "pageName": "Sultan Bazar",
+    "status": "Typically replies instantly",
+    "messages": [
+      {
+        "from": "customer",
+        "text": "Hi, how much is the date-palm jaggery?"
+      },
+      {
+        "from": "bot",
+        "text": "Pure date-palm jaggery is ৳450 per kg. Delivery in Dhaka is ৳60 and takes 2-3 days."
+      },
+      {
+        "from": "customer",
+        "text": "I'll take 2 kg"
+      },
+      {
+        "from": "bot",
+        "text": "Of course! Please share your name, phone number and full address."
+      },
+      {
+        "from": "customer",
+        "text": "Rahim, 01712-345678, Mirpur 10, Dhaka"
+      }
+    ],
+    "confirmTitle": "Order confirmed",
+    "confirmBody": "Date-palm jaggery × 2 · Total ৳960 · Cash on delivery",
+    "inputPlaceholder": "Type a message…",
+    "ariaLabel": "Sample of the AI chatting with a customer on Messenger and taking an order"
+  },
+  "orderToast": {
+    "title": "New order",
+    "body": "Rahim · ৳960",
+    "risk": "Low risk"
+  },
+  "trust": {
+    "placeholder": true,
+    "label": "Trusted by 500+ online sellers in Bangladesh",
+    "avatars": [
+      "R",
+      "K",
+      "S",
+      "N",
+      "T"
+    ],
+    "worksWith": "Works with",
+    "integrations": [
       {
         "icon": "MessageCircle",
-        "title": "Missed messages",
-        "body": "Hundreds of customer questions pile up overnight. You reply all morning instead of running your business."
+        "name": "Facebook Messenger"
       },
       {
-        "icon": "AlertTriangle",
-        "title": "COD fraud",
-        "body": "Fake orders with wrong phone numbers and vague addresses waste your stock and courier budget."
+        "icon": "Sheet",
+        "name": "Google Sheets"
       },
       {
-        "icon": "PackageX",
-        "title": "Lost orders",
-        "body": "No system means orders fall through the cracks. A customer says they ordered, you have no record."
+        "icon": "Wallet",
+        "name": "bKash · Nagad"
       }
+    ]
+  },
+  "problem": {
+    "eyebrow": "The problem",
+    "title": "How long can you keep replying by hand?",
+    "subtitle": "The more messages you get, the more orders slip away. jobabai closes that gap.",
+    "beforeTitle": "How it goes today",
+    "afterTitle": "With jobabai",
+    "before": [
+      "Night-time messages sit unanswered until morning",
+      "The same price question answered a hundred times a day",
+      "Orders live in a notebook or your memory and get lost",
+      "COD orders with fake numbers come back as returns"
+    ],
+    "after": [
+      "Every message answered in seconds, 24/7",
+      "Correct price and stock straight from your catalog",
+      "Orders saved automatically with name, phone and address",
+      "A risk score on suspicious orders before you ship"
     ]
   },
   "howItWorks": {
-    "title": "Up in 3 steps",
+    "eyebrow": "How it works",
+    "title": "Live in 3 steps, no coding needed",
     "steps": [
-      { "num": "01", "title": "Upload your catalog", "body": "Add your products — name, price, description, FAQ. Takes minutes." },
-      { "num": "02", "title": "Connect your Facebook Page", "body": "One-click OAuth. jobabai watches for new Messenger messages." },
-      { "num": "03", "title": "Your bot answers customers", "body": "Grounded replies from your catalog only. Orders go straight to your Google Sheet." }
-    ]
-  },
-  "features": {
-    "title": "Everything your f-commerce needs",
-    "cards": [
-      { "icon": "Bot", "title": "Catalog-grounded replies", "body": "Never invents prices or products not in your catalog." },
-      { "icon": "ShieldCheck", "title": "COD order screening", "body": "Flags malformed phones, suspicious addresses, and bulk-order risk automatically." },
-      { "icon": "Sheet", "title": "Google Sheets integration", "body": "Every confirmed order lands in your own Sheet — no third-party dashboard to learn." },
-      { "icon": "Languages", "title": "Bangla + English mix", "body": "Customers write however they write. jobabai understands both." },
-      { "icon": "AlertOctagon", "title": "Risk score per order", "body": "Each COD order gets a risk score. Ship confident, flag the dodgy ones." },
-      { "icon": "Bell", "title": "Instant seller notification", "body": "New order? You get notified immediately." }
-    ]
-  },
-  "pricing": {
-    "title": "Simple, BDT pricing",
-    "subtitle": "No USD surprises. Pay with bKash, Nagad, or card.",
-    "monthly": "Monthly",
-    "annual": "Annual",
-    "annualSave": "Save 20%",
-    "plans": [
       {
-        "name": "Starter",
-        "price": "৳999",
-        "period": "/month",
-        "orders": "500 orders/mo",
-        "features": ["Messenger auto-reply", "COD screening", "Google Sheets sync", "Email support"],
-        "cta": "Start free trial"
+        "title": "Connect your Facebook Page",
+        "body": "Enter your Page ID and access token in the dashboard, or connect with Facebook in one click."
       },
       {
-        "name": "Growth",
-        "price": "৳2,499",
-        "period": "/month",
-        "orders": "2,000 orders/mo",
-        "popular": true,
-        "features": ["Everything in Starter", "Priority support", "Custom fallback message", "Risk report export"],
-        "cta": "Start free trial"
+        "title": "Add your products",
+        "body": "Add name, price, stock and delivery charge. Upload many products at once with a CSV."
       },
       {
-        "name": "Scale",
-        "price": "৳4,999",
-        "period": "/month",
-        "orders": "5,000 orders/mo",
-        "features": ["Everything in Growth", "Dedicated onboarding", "Multiple Pages", "API access"],
-        "cta": "Contact us"
+        "title": "AI replies and takes orders",
+        "body": "Replies go out on Messenger, and orders land in your dashboard and your Google Sheet."
       }
     ]
   },
-  "faq": {
-    "title": "Questions",
-    "items": [
-      { "q": "Does jobabai work with any Facebook Page?", "a": "Yes. Any Facebook Page with Messenger enabled can connect to jobabai with one OAuth click." },
-      { "q": "What if jobabai doesn't know the answer?", "a": "It says so honestly — \"I don't have that information, please contact the seller.\" It never invents prices or products." },
-      { "q": "Is my catalog data safe?", "a": "Your catalog is isolated to your account. No other seller can ever see your products or orders. Data is encrypted at rest." },
-      { "q": "Can I pay with bKash?", "a": "Yes. We accept bKash, Nagad, and card. BDT pricing, no hidden currency conversion." }
+  "features": {
+    "eyebrow": "Features",
+    "title": "Everything an online seller needs, in one place",
+    "cards": [
+      {
+        "icon": "Languages",
+        "title": "Replies in Bangla and Banglish",
+        "body": "However customers write, the AI understands and answers only from your catalog. It never makes up things that aren't there."
+      },
+      {
+        "icon": "PackageCheck",
+        "title": "Automatic order collection",
+        "body": "Collects name, phone, address and quantity inside the chat and confirms the order."
+      },
+      {
+        "icon": "ShieldCheck",
+        "title": "Risk score for fake orders",
+        "body": "Warns you about wrong numbers, vague addresses or unusual quantities."
+      },
+      {
+        "icon": "Sheet",
+        "title": "Orders in Google Sheets",
+        "body": "Every order goes straight to your own Sheet."
+      },
+      {
+        "icon": "LifeBuoy",
+        "title": "Fallback and take over",
+        "body": "When the AI doesn't know, it sends your own fallback message, and you can continue the chat yourself."
+      },
+      {
+        "icon": "LayoutDashboard",
+        "title": "One dashboard for everything",
+        "body": "See and manage orders, conversations, products and risk reports in one place. Confirm or cancel in one click."
+      }
     ]
   },
-  "cta": {
-    "title": "Start today — free for 14 days",
-    "subtitle": "No credit card required. Cancel any time.",
-    "emailPlaceholder": "Enter your email",
-    "button": "Get Early Access"
-  },
-  "logoMarquee": {
-    "trusted": "Trusted by 500+ sellers across Bangladesh"
-  },
-  "metrics": {
-    "title": "Numbers that matter",
-    "items": [
-      { "value": "98%", "label": "Reply rate" },
-      { "value": "40%", "label": "Fewer fake orders" },
-      { "value": "500+", "label": "Active sellers" },
-      { "value": "24/7", "label": "Always on" }
+  "tour": {
+    "eyebrow": "Take a look inside",
+    "title": "From message to order, the whole journey",
+    "label": "Steps of how jobabai works",
+    "tabs": [
+      {
+        "title": "Conversation",
+        "body": "The AI quotes prices from your catalog and answers delivery questions."
+      },
+      {
+        "title": "Order",
+        "body": "It turns the customer's details into an order and checks the risk."
+      },
+      {
+        "title": "Dashboard",
+        "body": "Every order in one list, sorted by risk."
+      }
     ]
   },
-  "testimonials": {
-    "title": "What sellers say",
+  "orderMockup": {
+    "title": "Order #1042",
+    "source": "From Messenger",
+    "fields": [
+      {
+        "label": "Name",
+        "value": "Rahim Uddin"
+      },
+      {
+        "label": "Phone",
+        "value": "01712-345678"
+      },
+      {
+        "label": "Address",
+        "value": "Mirpur 10, Dhaka"
+      },
+      {
+        "label": "Product",
+        "value": "Date-palm jaggery × 2"
+      },
+      {
+        "label": "Total",
+        "value": "৳960 · COD"
+      }
+    ],
+    "riskLabel": "Risk score",
+    "riskValue": "Low · 12/100",
+    "riskHint": "Valid phone number, complete address"
+  },
+  "dashboardMockup": {
+    "title": "Today's orders",
+    "stats": [
+      {
+        "label": "Total orders",
+        "value": "24"
+      },
+      {
+        "label": "Pending",
+        "value": "5"
+      },
+      {
+        "label": "Risky",
+        "value": "2"
+      }
+    ],
+    "columns": [
+      "Customer",
+      "Product",
+      "Total",
+      "Risk"
+    ],
+    "rows": [
+      {
+        "name": "Rahim",
+        "product": "Date-palm jaggery × 2",
+        "total": "৳960",
+        "risk": "low"
+      },
+      {
+        "name": "Fatema",
+        "product": "Liquid jaggery × 1",
+        "total": "৳510",
+        "risk": "medium"
+      },
+      {
+        "name": "Unknown #219",
+        "product": "Patali jaggery × 10",
+        "total": "৳4,600",
+        "risk": "high"
+      }
+    ],
+    "riskLabels": {
+      "low": "Low",
+      "medium": "Medium",
+      "high": "High"
+    }
+  },
+  "results": {
+    "eyebrow": "Results",
+    "title": "What sellers are getting",
     "items": [
       {
-        "quote": "jobabai replies to my customers even at 3am. I wake up to confirmed orders, not a pile of unanswered messages.",
+        "placeholder": true,
+        "metric": "3×",
+        "metricLabel": "faster replies",
+        "period": "In the first 7 days",
+        "quote": "Customers get answers even at 3 am. I wake up to confirmed orders, not a pile of unanswered messages.",
         "name": "Rina Akter",
-        "shop": "Fashion store, Dhaka"
+        "shop": "Fashion page, Dhaka"
       },
       {
-        "quote": "COD fraud dropped by half after I started using jobabai. The risk score feature is a lifesaver.",
+        "placeholder": true,
+        "metric": "40%",
+        "metricLabel": "fewer fake orders",
+        "period": "In the first 30 days",
+        "quote": "I call the suspicious orders first based on the risk score. Returned parcels have dropped a lot.",
         "name": "Karim Mia",
-        "shop": "Electronics reseller, Chittagong"
+        "shop": "Gadget seller, Chattogram"
       },
       {
-        "quote": "Setup took 10 minutes. Now my Google Sheet fills up automatically every night.",
+        "placeholder": true,
+        "metric": "10 min",
+        "metricLabel": "to set up",
+        "period": "On day one",
+        "quote": "I connected the Page, added products and it started working. Orders now land in my Google Sheet on their own.",
         "name": "Sadia Islam",
         "shop": "Skincare brand, Sylhet"
       }
     ]
   },
+  "roadmap": {
+    "eyebrow": "Coming soon",
+    "title": "Starting with Messenger, much more ahead",
+    "subtitle": "Right now our full focus is Facebook Messenger. Here is what comes next:",
+    "badge": "Soon",
+    "items": [
+      {
+        "icon": "MessageSquareReply",
+        "title": "Comment auto-reply",
+        "body": "Answer price questions in post comments and follow up in the inbox."
+      },
+      {
+        "icon": "Camera",
+        "title": "Instagram DM",
+        "body": "The same AI for your Instagram messages."
+      },
+      {
+        "icon": "Phone",
+        "title": "WhatsApp Business",
+        "body": "Chat and take orders on WhatsApp."
+      },
+      {
+        "icon": "Truck",
+        "title": "Courier booking",
+        "body": "Book parcels with Pathao, Steadfast or RedX in one click."
+      },
+      {
+        "icon": "Wallet",
+        "title": "bKash / Nagad payment links",
+        "body": "Send advance-payment links right in the chat."
+      },
+      {
+        "icon": "Megaphone",
+        "title": "Broadcast and follow-up",
+        "body": "Send offers and reminders to past customers."
+      },
+      {
+        "icon": "Users",
+        "title": "Team inbox and multiple Pages",
+        "body": "Run several Pages together with your whole team."
+      },
+      {
+        "icon": "BarChart3",
+        "title": "Sales reports",
+        "body": "See which products sell and when messages peak."
+      }
+    ]
+  },
+  "pricing": {
+    "eyebrow": "Pricing",
+    "title": "Simple pricing, in taka",
+    "subtitle": "No dollar hassle. Pay with bKash, Nagad or card.",
+    "billingLabel": "Billing period",
+    "monthly": "Monthly",
+    "annual": "Yearly",
+    "annualSave": "Save 20%",
+    "perMonth": "/month",
+    "billedAnnually": "Billed once a year",
+    "popular": "Popular",
+    "trialNote": "First 14 days free on every plan",
+    "payWith": "Pay with",
+    "paymentMethods": [
+      "bKash",
+      "Nagad",
+      "Card"
+    ],
+    "plans": [
+      {
+        "name": "Starter",
+        "description": "For new Pages",
+        "price": "৳999",
+        "annualPrice": "৳799",
+        "limit": "1 Facebook Page · 500 customers",
+        "features": [
+          "Catalog Q&A",
+          "AI replies on Messenger",
+          "Automatic order collection",
+          "Google Sheets sync",
+          "Email support"
+        ],
+        "cta": "Start free"
+      },
+      {
+        "name": "Growth",
+        "description": "For growing businesses",
+        "price": "৳1,999",
+        "annualPrice": "৳1,599",
+        "limit": "3 Pages · 1,000 customers",
+        "popular": true,
+        "features": [
+          "Everything in Starter",
+          "Full COD flow with risk score",
+          "Sales and message analytics",
+          "Custom fallback message"
+        ],
+        "cta": "Start free"
+      },
+      {
+        "name": "Business",
+        "description": "For larger brands",
+        "price": "৳3,999",
+        "annualPrice": "৳3,199",
+        "limit": "Unlimited Pages",
+        "features": [
+          "Everything in Growth",
+          "Priority support",
+          "Custom integrations",
+          "Dedicated onboarding"
+        ],
+        "cta": "Contact us"
+      }
+    ],
+    "addonsTitle": "Add-ons",
+    "addonsSubtitle": "Add to any plan",
+    "addons": [
+      {
+        "name": "Extra Facebook Page",
+        "price": "৳499",
+        "unit": "/Page/month"
+      },
+      {
+        "name": "Extra 500 customers",
+        "price": "৳399",
+        "unit": "/month"
+      },
+      {
+        "name": "Done-for-you setup",
+        "price": "৳1,500",
+        "unit": "one-time"
+      },
+      {
+        "name": "Catalog upload (up to 100 products)",
+        "price": "৳999",
+        "unit": "one-time"
+      }
+    ],
+    "addonsNote": "Add-on prices are preliminary and will be finalised before launch."
+  },
+  "faq": {
+    "eyebrow": "FAQ",
+    "title": "Your questions, answered",
+    "items": [
+      {
+        "q": "How long does setup take?",
+        "a": "Usually 5-10 minutes. Create an account, connect your Facebook Page and add your products. The AI starts replying right after."
+      },
+      {
+        "q": "Which Facebook Pages does it work with?",
+        "a": "Any Facebook Page with Messenger turned on. You only need to be an admin of the Page."
+      },
+      {
+        "q": "Does it understand Banglish?",
+        "a": "Yes. Customers can write in Bangla, Banglish or English and the AI understands and replies."
+      },
+      {
+        "q": "What happens when the AI doesn't know an answer?",
+        "a": "It never makes anything up. It sends your own fallback message, and you can then talk to the customer yourself."
+      },
+      {
+        "q": "Is my Page and data safe?",
+        "a": "Your Page token is stored encrypted. Your products, customers and orders stay in your account only, and no one else can see them."
+      },
+      {
+        "q": "Do I need technical knowledge?",
+        "a": "No. Everything is done from the dashboard in Bangla. If you get stuck, we help you set up."
+      },
+      {
+        "q": "How do I pay?",
+        "a": "With bKash, Nagad or card. Prices are in taka, with no hidden charges."
+      },
+      {
+        "q": "Can I cancel anytime?",
+        "a": "Yes. There is no contract, and you can cancel in any month."
+      }
+    ]
+  },
+  "finalCta": {
+    "title": "Turn on AI for your Page today",
+    "subtitle": "14 days free. No credit card needed.",
+    "button": "Start free"
+  },
   "footer": {
-    "tagline": "AI-powered auto-reply for Bangladesh f-commerce sellers.",
-    "links": ["Features", "Pricing", "How it works", "Contact"],
-    "legal": ["Privacy", "Terms"],
-    "langToggle": "বাংলা",
+    "tagline": "AI sales assistant on Facebook Messenger for online sellers in Bangladesh.",
+    "product": "Product",
+    "account": "Account",
+    "login": "Log in",
+    "register": "Create account",
+    "madeBy": "A product of Interactive Software Care",
     "copyright": "© 2026 jobabai. All rights reserved."
   }
 }

@@ -2,68 +2,84 @@
 @tailwind components;
 @tailwind utilities;
 
-/* jobabai brand tokens — Black · Violet · Lime · White */
+/*
+ * jobabai homepage tokens. Light by design: every color is set here and
+ * components only reference these tokens (via tailwind.config.ts).
+ */
 :root {
-  /* brand */
-  --brand-violet:        #7D39EB;
-  --brand-violet-hover:  #6A2DD4;
-  --brand-violet-soft:   #F3EEFF;
-  --brand-lime:          #C6FF33;
+  color-scheme: light;
 
-  /* semantic — light */
-  --background:          #F8F7FF;
-  --foreground:          #09090B;
-  --card:                #FFFFFF;
-  --card-foreground:     #09090B;
-  --primary:             #7D39EB;
-  --primary-foreground:  #FFFFFF;
-  --muted:               #F3EEFF;
-  --muted-foreground:    #71717A;
-  --accent:              #C6FF33;
-  --accent-foreground:   #09090B;
-  --border:              #EDE9FE;
-  --input:               #EDE9FE;
-  --ring:                #7D39EB;
-  --radius:              0.625rem;
+  /* brand */
+  --primary: #3b5bdb;
+  --primary-hover: #2f4ac0;
+  --primary-soft: #edf2ff;
+  --primary-deep: #1e2a6e;
+  --primary-foreground: #ffffff;
+
+  /* surfaces + text */
+  --background: #f8fafc;
+  --surface: #ffffff;
+  --foreground: #0f172a;
+  --muted-foreground: #5b6476;
+  --border: #e6eaf2;
+  --ring: #3b5bdb;
 
   /* status */
-  --status-confirmed:    #22C55E;
-  --status-risk:         #EF4444;
-  --status-pending:      #F59E0B;
-  --status-processing:   #3B82F6;
-}
+  --success: #12b886;
+  --success-soft: #e6fcf5;
+  --success-strong: #087f5b;
+  --warning: #f59f00;
+  --warning-soft: #fff4e6;
+  --warning-strong: #b35c00;
+  --danger: #e03131;
+  --danger-soft: #fff5f5;
+  --danger-strong: #c92a2a;
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background:          #09090B;
-    --foreground:          #F8F7FF;
-    --card:                #111113;
-    --card-foreground:     #F8F7FF;
-    --primary:             #9B6EF3;
-    --primary-foreground:  #09090B;
-    --muted:               #1A1026;
-    --muted-foreground:    #A1A1AA;
-    --border:              #27104A;
-    --input:               #27104A;
-    --ring:                #9B6EF3;
-  }
+  /* Messenger's own gradient, used only by the chat mockup */
+  --messenger-from: #0099ff;
+  --messenger-to: #a033ff;
+  --bubble: #f0f2f5;
+
+  --radius: 1rem;
 }
 
 @layer base {
   * {
-    box-sizing: border-box;
     border-color: var(--border);
   }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
   body {
     background-color: var(--background);
     color: var(--foreground);
-    font-family: var(--font-jakarta), 'Noto Sans Bengali', system-ui, sans-serif;
-    -webkit-font-smoothing: antialiased;
+    font-size: 1.0625rem;
+    line-height: 1.7;
   }
-}
 
-@layer utilities {
-  .text-balance {
+  h1,
+  h2,
+  h3 {
     text-wrap: balance;
+    line-height: 1.25;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: 2px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      transition-duration: 0.01ms !important;
+    }
   }
 }
