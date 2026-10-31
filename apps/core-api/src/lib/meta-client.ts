@@ -20,6 +20,19 @@ async function graphFetch(path: string, accessToken: string, init?: RequestInit)
   }
 }
 
+// Sellers often paste a User token; if it manages the Page, swap it for that
+// Page's token. A Page token (or an unrelated token) is returned unchanged.
+export async function resolvePageAccessToken(pageId: string, accessToken: string): Promise<string> {
+  try {
+    const response = await graphFetch(`/${pageId}?fields=access_token`, accessToken);
+    if (!response.ok) return accessToken;
+    const body = (await response.json()) as { access_token?: string };
+    return body.access_token ?? accessToken;
+  } catch {
+    return accessToken;
+  }
+}
+
 // SEL-2: validates a Page access token by calling GET /{pageId}?fields=name.
 export async function getGraphPageName(pageId: string, accessToken: string): Promise<string> {
   let response: Response;

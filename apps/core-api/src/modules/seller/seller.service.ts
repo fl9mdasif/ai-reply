@@ -7,6 +7,7 @@ import {
   getGraphPageName,
   getLongLivedUserToken,
   getPageAccounts,
+  resolvePageAccessToken,
   subscribePageToApp,
   unsubscribePageFromApp,
 } from '../../lib/meta-client.js';
@@ -102,13 +103,14 @@ export async function connectFacebook(
     throw new ConflictError('This Page is already connected to another seller');
   }
 
-  const pageName = await getGraphPageName(input.pageId, input.pageAccessToken);
-  const webhookSubscribed = await subscribePageToApp(input.pageId, input.pageAccessToken);
+  const pageToken = await resolvePageAccessToken(input.pageId, input.pageAccessToken);
+  const pageName = await getGraphPageName(input.pageId, pageToken);
+  const webhookSubscribed = await subscribePageToApp(input.pageId, pageToken);
 
   await connectFacebookPage(sellerId, {
     facebookPageId: input.pageId,
     facebookPageName: pageName,
-    facebookPageAccessToken: encrypt(input.pageAccessToken),
+    facebookPageAccessToken: encrypt(pageToken),
     webhookSubscribed,
   });
 
