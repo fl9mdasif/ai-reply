@@ -13,7 +13,34 @@
     "hasAccount": "Already have an account?",
     "loggingIn": "Signing in...",
     "registering": "Creating account...",
-    "inviteCode": "Invite Code (optional)"
+    "inviteCode": "Invite Code (optional)",
+    "panelEyebrow": "AI sales assistant for Facebook Messenger",
+    "panelTitle": "AI answers every message on your Page, and takes the order too",
+    "panelBody": "jobabai replies to customers in Bangla from your catalog, takes orders inside the chat and warns you about fake orders. Day and night, 24/7.",
+    "panelFeatures": [
+      "24/7 replies in Bangla and Banglish",
+      "Automatic orders with name, phone and address",
+      "Risk score for fake COD orders",
+      "Orders straight to Google Sheets"
+    ],
+    "panelStats": [
+      {
+        "value": "24/7",
+        "label": "Always on"
+      },
+      {
+        "value": "5 min",
+        "label": "Setup"
+      },
+      {
+        "value": "14 days",
+        "label": "Free trial"
+      }
+    ],
+    "panelFooter": "A product of Interactive Software Care",
+    "backHome": "Back to homepage",
+    "trialNote": "14 days free · No credit card needed",
+    "terms": "By creating an account you agree to our Terms and Privacy Policy."
   },
   "nav": {
     "overview": "Overview",

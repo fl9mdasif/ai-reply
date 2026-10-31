@@ -111,7 +111,6 @@ export default function IntegrationsPage() {
     setManualError('');
     try {
       await connectPage.mutateAsync({ pageId: manualPageId.trim(), pageAccessToken: manualToken.trim() });
-      setShowManualForm(false);
       setManualPageId('');
       setManualToken('');
       showToast('Facebook Page connected!', 'success');

@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useTranslations } from 'next-intl';
 import { setToken, decodeToken } from '@/lib/auth';
+import { AuthShell } from '@/components/auth/AuthShell';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:3000';
 
@@ -45,20 +46,8 @@ export default function LoginPage({ params }: { params: { locale: string } }) {
   }
 
   return (
-    <div className="min-h-screen bg-[#F8F7FF] flex items-center justify-center px-4">
-      <div className="w-full max-w-md">
-        <div className="text-center mb-8">
-          <div className="inline-flex items-center gap-2 mb-6">
-            <div className="w-8 h-8 bg-[#7D39EB] rounded-lg flex items-center justify-center">
-              <span className="text-white font-bold text-sm">J</span>
-            </div>
-            <span className="font-semibold text-lg text-[#09090B]">jobabai</span>
-          </div>
-          <h1 className="text-2xl font-bold text-[#09090B]">{t('loginTitle')}</h1>
-          <p className="text-[#6B7280] mt-1 text-sm">{t('loginSubtitle')}</p>
-        </div>
-
-        <div className="bg-white rounded-2xl border border-[#EDE9FE] p-8 shadow-sm">
+    <AuthShell locale={params.locale} title={t('loginTitle')} subtitle={t('loginSubtitle')}>
+        <div>
           <form onSubmit={(e) => { void handleSubmit(e); }} className="space-y-4">
             <div>
               <label className="block text-sm font-medium text-[#09090B] mb-1.5">
@@ -113,7 +102,6 @@ export default function LoginPage({ params }: { params: { locale: string } }) {
             </Link>
           </p>
         </div>
-      </div>
-    </div>
+    </AuthShell>
   );
 }
