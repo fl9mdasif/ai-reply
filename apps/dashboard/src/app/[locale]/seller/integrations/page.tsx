@@ -67,6 +67,10 @@ export default function IntegrationsPage() {
 
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
   const [fbLoading, setFbLoading] = useState(false);
+  const [showManualForm, setShowManualForm] = useState(false);
+  const [manualPageId, setManualPageId] = useState('');
+  const [manualToken, setManualToken] = useState('');
+  const [manualError, setManualError] = useState('');
   // Multiple pages picker
   const [pageOptions, setPageOptions] = useState<FacebookPageOption[]>([]);
   const [showPagePicker, setShowPagePicker] = useState(false);
@@ -102,6 +106,20 @@ export default function IntegrationsPage() {
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  async function handleManualConnect(e: React.FormEvent) {
+    e.preventDefault();
+    setManualError('');
+    try {
+      await connectPage.mutateAsync({ pageId: manualPageId.trim(), pageAccessToken: manualToken.trim() });
+      setShowManualForm(false);
+      setManualPageId('');
+      setManualToken('');
+      showToast('Facebook Page connected!', 'success');
+    } catch (err) {
+      setManualError((err as Error).message || 'Connection failed. Check your Page ID and token.');
+    }
+  }
 
   async function startFacebookOAuth() {
     setFbLoading(true);
@@ -248,24 +266,94 @@ export default function IntegrationsPage() {
                 </div>
               </div>
             ) : (
-              <div>
-                <p className="text-sm text-[#6B7280] mb-4">
-                  Connect your Facebook Page to start receiving and replying to Messenger orders automatically.
-                </p>
-                <button
-                  onClick={() => { void startFacebookOAuth(); }}
-                  disabled={fbLoading}
-                  className="flex items-center gap-2 px-5 py-3 rounded-xl bg-[#1877F2] text-white text-sm font-semibold hover:bg-[#1565D8] disabled:opacity-60 transition-colors shadow-sm"
-                >
-                  {fbLoading ? (
-                    <><RefreshCw size={15} className="animate-spin" /> Redirecting to Facebook…</>
-                  ) : (
-                    <><Globe size={15} /> Connect with Facebook</>
-                  )}
-                </button>
-                <p className="text-xs text-[#9CA3AF] mt-2">
-                  You&apos;ll be taken to Facebook to log in and pick your Page — no token copying needed.
-                </p>
+              <div className="space-y-4">
+                {/* OAuth button */}
+                <div>
+                  <button
+                    onClick={() => { void startFacebookOAuth(); }}
+                    disabled={fbLoading}
+                    className="flex items-center gap-2 px-5 py-3 rounded-xl bg-[#1877F2] text-white text-sm font-semibold hover:bg-[#1565D8] disabled:opacity-60 transition-colors shadow-sm"
+                  >
+                    {fbLoading ? (
+                      <><RefreshCw size={15} className="animate-spin" /> Redirecting to Facebook…</>
+                    ) : (
+                      <><Globe size={15} /> Connect with Facebook</>
+                    )}
+                  </button>
+                  <p className="text-xs text-[#9CA3AF] mt-1.5">
+                    Facebook-এ গিয়ে login করো, Page বাছো — হয়ে গেল।
+                  </p>
+                </div>
+
+                {/* Divider */}
+                <div className="flex items-center gap-3">
+                  <div className="flex-1 h-px bg-[#EDE9FE]" />
+                  <span className="text-xs text-[#9CA3AF]">অথবা manually connect করো</span>
+                  <div className="flex-1 h-px bg-[#EDE9FE]" />
+                </div>
+
+                {/* Manual form toggle */}
+                {!showManualForm ? (
+                  <button
+                    onClick={() => setShowManualForm(true)}
+                    className="text-sm text-[#7D39EB] hover:underline font-medium"
+                  >
+                    Page ID ও Access Token দিয়ে connect করো →
+                  </button>
+                ) : (
+                  <form onSubmit={(e) => { void handleManualConnect(e); }} className="space-y-3 pt-1">
+                    <div className="flex items-center justify-between">
+                      <p className="text-sm font-medium text-[#09090B]">Manual Connection</p>
+                      <button
+                        type="button"
+                        onClick={() => { setShowManualForm(false); setManualError(''); }}
+                        className="text-[#9CA3AF] hover:text-[#6B7280]"
+                      >
+                        <X size={15} />
+                      </button>
+                    </div>
+                    <div>
+                      <label className="block text-xs font-medium text-[#6B7280] mb-1">Facebook Page ID</label>
+                      <input
+                        type="text"
+                        required
+                        value={manualPageId}
+                        onChange={(e) => setManualPageId(e.target.value)}
+                        placeholder="e.g. 123456789012345"
+                        className="w-full px-3 py-2 text-sm border border-[#EDE9FE] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#7D39EB]/30 focus:border-[#7D39EB]"
+                      />
+                      <p className="text-xs text-[#9CA3AF] mt-1">facebook.com/তোমার-page → About → Page ID</p>
+                    </div>
+                    <div>
+                      <label className="block text-xs font-medium text-[#6B7280] mb-1">Page Access Token</label>
+                      <input
+                        type="password"
+                        required
+                        value={manualToken}
+                        onChange={(e) => setManualToken(e.target.value)}
+                        placeholder="EAAxxxx…"
+                        className="w-full px-3 py-2 text-sm border border-[#EDE9FE] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#7D39EB]/30 focus:border-[#7D39EB]"
+                      />
+                      <p className="text-xs text-[#9CA3AF] mt-1">Meta for Developers → Graph API Explorer থেকে নাও</p>
+                    </div>
+                    {manualError && (
+                      <p className="text-xs text-red-600 bg-red-50 border border-red-100 rounded-lg px-3 py-2">
+                        {manualError}
+                      </p>
+                    )}
+                    <button
+                      type="submit"
+                      disabled={connectPage.isPending}
+                      className="flex items-center gap-2 px-4 py-2.5 rounded-lg bg-[#1877F2] text-white text-sm font-medium hover:bg-[#1565D8] disabled:opacity-60 transition-colors"
+                    >
+                      {connectPage.isPending ? (
+                        <><RefreshCw size={14} className="animate-spin" /> Connecting…</>
+                      ) : (
+                        <><Globe size={14} /> Connect Page</>
+                      )}
+                    </button>
+                  </form>
+                )}
               </div>
             )}
           </div>
