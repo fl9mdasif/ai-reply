@@ -69,13 +69,6 @@
   "trust": {
     "placeholder": true,
     "label": "বাংলাদেশের ৫০০+ অনলাইন বিক্রেতার আস্থা",
-    "avatars": [
-      "র",
-      "ক",
-      "স",
-      "ন",
-      "ত"
-    ],
     "worksWith": "যেগুলোর সাথে কাজ করে",
     "integrations": [
       {
@@ -90,6 +83,22 @@
         "icon": "Wallet",
         "name": "bKash · Nagad"
       }
+    ],
+    "brands": [
+      "Sultan Bazar",
+      "Deshi Gur Ghor",
+      "Rong Fashion House",
+      "Shopno Gadget",
+      "Nirjash Organic",
+      "Kaktarua Crafts",
+      "Mayer Doa Store",
+      "Bhai Bhai Electronics",
+      "Shada Kalo Clothing",
+      "Prakriti Skincare",
+      "Hridoy Hijab House",
+      "Bonolota Boutique",
+      "Chashi Bari Food",
+      "Dhakai Jamdani Point"
     ]
   },
   "problem": {
@@ -483,5 +492,12 @@
     "register": "অ্যাকাউন্ট খুলুন",
     "madeBy": "Interactive Software Care-এর একটি প্রোডাক্ট",
     "copyright": "© ২০২৬ jobabai। সর্বস্বত্ব সংরক্ষিত।"
+  },
+  "notFound": {
+    "title": "পাতাটি খুঁজে পাওয়া যায়নি",
+    "body": "আপনি যে পাতাটি খুঁজছেন সেটা সরানো হয়েছে, নাম বদলেছে, অথবা কখনো ছিল না। লিংকটা আরেকবার দেখে নিন।",
+    "home": "হোমপেজে ফিরুন",
+    "help": "সাহায্য দরকার?",
+    "links": "এগুলো কাজে লাগতে পারে"
   }
 }

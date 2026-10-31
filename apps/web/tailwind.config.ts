@@ -36,6 +36,12 @@ const config: Config = {
         card: "0 1px 2px rgb(15 23 42 / 0.04), 0 4px 16px rgb(15 23 42 / 0.05)",
         float: "0 12px 40px rgb(30 42 110 / 0.14)",
       },
+      keyframes: {
+        marquee: { from: { transform: "translateX(0)" }, to: { transform: "translateX(-50%)" } },
+      },
+      animation: {
+        marquee: "marquee 40s linear infinite",
+      },
       maxWidth: {
         prose: "65ch",
       },
