@@ -5,6 +5,7 @@ import { motion, useScroll, useTransform } from "framer-motion";
 import { useTranslations, useLocale } from "next-intl";
 import { fadeUp } from "@/lib/motion";
 import DashboardMockup from "@/components/DashboardMockup";
+import MessengerMockup from "@/components/MessengerMockup";
 
 export default function HeroSection() {
   const t = useTranslations();
@@ -24,7 +25,7 @@ export default function HeroSection() {
       className="relative min-h-screen flex items-center pt-16 overflow-hidden"
       style={{ background: "#F8F7FF" }}
     >
-      {/* subtle violet radial glow top-right */}
+      {/* violet radial glow top-right */}
       <div
         className="absolute -top-32 -right-32 w-[700px] h-[700px] rounded-full pointer-events-none"
         style={{
@@ -44,11 +45,11 @@ export default function HeroSection() {
 
       <motion.div
         style={{ y: heroY, opacity: heroOpacity }}
-        className="relative max-w-6xl mx-auto px-4 sm:px-6 w-full"
+        className="relative max-w-7xl mx-auto px-4 sm:px-6 w-full"
       >
-        <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center py-20">
+        <div className="grid lg:grid-cols-2 gap-10 lg:gap-8 items-center py-20">
           {/* left — copy */}
-          <div>
+          <div className="max-w-xl">
             <motion.div {...fadeUp(0.1)}>
               <span className="inline-block bg-[#7D39EB]/10 border border-[#7D39EB]/25 text-[#7D39EB] text-xs font-semibold px-3 py-1 rounded-full mb-6">
                 {t("hero.badge")}
@@ -64,7 +65,7 @@ export default function HeroSection() {
 
             <motion.p
               {...fadeUp(0.3)}
-              className="text-[#52525B] text-lg leading-relaxed mb-8 max-w-lg"
+              className="text-[#52525B] text-lg leading-relaxed mb-8"
             >
               {t("hero.subheadline")}
             </motion.p>
@@ -91,13 +92,24 @@ export default function HeroSection() {
             </motion.p>
           </div>
 
-          {/* right — dashboard mockup */}
-          <motion.div
-            {...fadeUp(0.35)}
-            className="flex justify-center lg:justify-end"
-          >
-            <DashboardMockup />
-          </motion.div>
+          {/* right — chat + dashboard side by side */}
+          <div className="flex items-end justify-center lg:justify-end gap-4">
+            {/* Chat mockup — phone narrow, desktop only */}
+            <motion.div
+              {...fadeUp(0.25)}
+              className="hidden lg:block shrink-0 w-[210px]"
+            >
+              <MessengerMockup />
+            </motion.div>
+
+            {/* Dashboard mockup — main */}
+            <motion.div
+              {...fadeUp(0.4)}
+              className="w-full max-w-[360px] shrink-0"
+            >
+              <DashboardMockup />
+            </motion.div>
+          </div>
         </div>
       </motion.div>
     </section>
