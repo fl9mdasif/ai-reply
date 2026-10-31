@@ -5,6 +5,7 @@
     "howItWorks": "How it works",
     "contact": "Contact",
     "cta": "Get Started",
+    "login": "Login",
     "langToggle": "বাংলা"
   },
   "hero": {
@@ -101,6 +102,38 @@
     "subtitle": "No credit card required. Cancel any time.",
     "emailPlaceholder": "Enter your email",
     "button": "Get Early Access"
+  },
+  "logoMarquee": {
+    "trusted": "Trusted by 500+ sellers across Bangladesh"
+  },
+  "metrics": {
+    "title": "Numbers that matter",
+    "items": [
+      { "value": "98%", "label": "Reply rate" },
+      { "value": "40%", "label": "Fewer fake orders" },
+      { "value": "500+", "label": "Active sellers" },
+      { "value": "24/7", "label": "Always on" }
+    ]
+  },
+  "testimonials": {
+    "title": "What sellers say",
+    "items": [
+      {
+        "quote": "jobabai replies to my customers even at 3am. I wake up to confirmed orders, not a pile of unanswered messages.",
+        "name": "Rina Akter",
+        "shop": "Fashion store, Dhaka"
+      },
+      {
+        "quote": "COD fraud dropped by half after I started using jobabai. The risk score feature is a lifesaver.",
+        "name": "Karim Mia",
+        "shop": "Electronics reseller, Chittagong"
+      },
+      {
+        "quote": "Setup took 10 minutes. Now my Google Sheet fills up automatically every night.",
+        "name": "Sadia Islam",
+        "shop": "Skincare brand, Sylhet"
+      }
+    ]
   },
   "footer": {
     "tagline": "AI-powered auto-reply for Bangladesh f-commerce sellers.",

@@ -51,6 +51,12 @@ export default function Navbar() {
               {t("nav.langToggle")}
             </Link>
             <a
+              href={`${process.env.NEXT_PUBLIC_DASHBOARD_URL ?? "http://localhost:3001"}/${locale}/auth/login`}
+              className="hidden sm:block text-white/70 hover:text-white text-sm transition-colors"
+            >
+              {t("nav.login")}
+            </a>
+            <a
               href="#cta"
               className="bg-[#C6FF33] text-black text-sm font-semibold px-4 py-2 rounded-lg hover:bg-[#d4ff55] transition-colors"
             >
