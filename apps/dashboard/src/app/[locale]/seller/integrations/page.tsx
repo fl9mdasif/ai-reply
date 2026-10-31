@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import {
   Globe,
@@ -17,7 +17,6 @@ import {
 import {
   useSellerMe,
   useHealth,
-  useFacebookAuthUrl,
   useConnectFacebookPage,
   useDisconnectFacebook,
   useWebhookToggle,
@@ -61,7 +60,6 @@ export default function IntegrationsPage() {
 
   const { data: seller, isLoading: sellerLoading, refetch: refetchSeller } = useSellerMe();
   const { data: health, isLoading: healthLoading } = useHealth();
-  const { refetch: fetchAuthUrl } = useFacebookAuthUrl();
   const connectPage = useConnectFacebookPage();
   const disconnectFb = useDisconnectFacebook();
   const webhookToggle = useWebhookToggle();
@@ -73,9 +71,9 @@ export default function IntegrationsPage() {
   const [pageOptions, setPageOptions] = useState<FacebookPageOption[]>([]);
   const [showPagePicker, setShowPagePicker] = useState(false);
 
-  const showToast = useCallback((message: string, type: 'success' | 'error') => {
+  function showToast(message: string, type: 'success' | 'error') {
     setToast({ message, type });
-  }, []);
+  }
 
   // Handle OAuth callback result from URL params
   useEffect(() => {
@@ -108,15 +106,11 @@ export default function IntegrationsPage() {
   async function startFacebookOAuth() {
     setFbLoading(true);
     try {
-      const result = await fetchAuthUrl();
-      if (result.data?.url) {
-        window.location.href = result.data.url;
-      } else {
-        showToast('Could not get Facebook auth URL. Check META_APP_ID is configured.', 'error');
-        setFbLoading(false);
-      }
-    } catch {
-      showToast('Facebook OAuth not configured on server.', 'error');
+      const data = await api.get<{ url: string }>('/seller/facebook/auth-url');
+      window.location.href = data.url;
+      // don't setFbLoading(false) — page is navigating away
+    } catch (err) {
+      showToast((err as Error).message || 'Facebook OAuth not configured on server.', 'error');
       setFbLoading(false);
     }
   }
