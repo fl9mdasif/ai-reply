@@ -7,7 +7,6 @@
  * Requires a valid .env file in apps/core-api/ with MONGODB_URI etc.
  */
 
-import 'dotenv/config';
 import bcrypt from 'bcryptjs';
 import { ObjectId } from 'mongodb';
 import { connectDb, sellersCollection, closeDb } from '../src/lib/db.js';

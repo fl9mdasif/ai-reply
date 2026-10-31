@@ -3,5 +3,12 @@
   "private": true,
   "workspaces": [
     "apps/*"
-  ]
+  ],
+  "scripts": {
+    "dev:api": "npm run dev --workspace=apps/core-api",
+    "dev:dashboard": "npm run dev --workspace=apps/dashboard",
+    "dev:web": "npm run dev --workspace=apps/web",
+    "dev:rag-stub": "npm run stub:rag --workspace=apps/core-api",
+    "seed:admin": "npm run seed:admin --workspace=apps/core-api"
+  }
 }
