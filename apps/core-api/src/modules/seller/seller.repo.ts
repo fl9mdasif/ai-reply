@@ -41,6 +41,13 @@ export async function connectFacebookPage(
   );
 }
 
+export async function patchWebhookStatus(sellerId: string, subscribed: boolean): Promise<void> {
+  await sellersCollection().updateOne(
+    { _id: new ObjectId(sellerId) },
+    { $set: { webhookSubscribed: subscribed, updatedAt: new Date() } },
+  );
+}
+
 export async function disconnectFacebookPage(sellerId: string): Promise<void> {
   await sellersCollection().updateOne(
     { _id: new ObjectId(sellerId) },

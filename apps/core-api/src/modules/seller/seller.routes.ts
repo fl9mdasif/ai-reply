@@ -5,6 +5,7 @@ import {
   deleteSheetsHandler,
   getMeHandler,
   getSheetsUrlHandler,
+  patchFacebookWebhookHandler,
   patchMeHandler,
   postConnectFacebookHandler,
 } from './seller.controller.js';
@@ -16,5 +17,6 @@ sellerRouter.get('/seller/me', getMeHandler);
 sellerRouter.patch('/seller/me', patchMeHandler);
 sellerRouter.post('/seller/connect-facebook', postConnectFacebookHandler);
 sellerRouter.delete('/seller/connect-facebook', deleteConnectFacebookHandler);
+sellerRouter.patch('/seller/facebook/webhook', patchFacebookWebhookHandler);
 sellerRouter.get('/seller/connect-sheets/url', getSheetsUrlHandler);
 sellerRouter.delete('/seller/connect-sheets', deleteSheetsHandler);

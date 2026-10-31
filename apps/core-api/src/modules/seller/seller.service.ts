@@ -10,6 +10,7 @@ import {
   findSellerById,
   findSellerByPageId,
   patchSeller,
+  patchWebhookStatus,
 } from './seller.repo.js';
 import type { ConnectFacebookInput, PatchMeInput } from './seller.schema.js';
 
@@ -104,6 +105,25 @@ export async function connectFacebook(
   });
 
   return { success: true, pageName, webhookSubscribed };
+}
+
+export async function toggleWebhookSubscription(
+  sellerId: string,
+  subscribe: boolean,
+): Promise<{ success: true; webhookSubscribed: boolean }> {
+  const seller = await findSellerById(sellerId);
+  if (!seller) throw new NotFoundError('Seller not found');
+  if (!seller.facebookPageId || !seller.facebookPageAccessToken) {
+    throw new ConflictError('Facebook Page not connected');
+  }
+  const token = decrypt(seller.facebookPageAccessToken);
+  if (subscribe) {
+    await subscribePageToApp(seller.facebookPageId, token);
+  } else {
+    await unsubscribePageFromApp(seller.facebookPageId, token);
+  }
+  await patchWebhookStatus(sellerId, subscribe);
+  return { success: true, webhookSubscribed: subscribe };
 }
 
 // SEL-5

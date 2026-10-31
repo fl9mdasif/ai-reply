@@ -1,15 +1,26 @@
 'use client';
 
-import { Globe, FileSpreadsheet, Zap, CheckCircle, XCircle, ExternalLink, RefreshCw, Link2Off } from 'lucide-react';
+import { useState } from 'react';
+import {
+  Globe,
+  FileSpreadsheet,
+  Zap,
+  CheckCircle,
+  XCircle,
+  ExternalLink,
+  RefreshCw,
+  Link2Off,
+  X,
+} from 'lucide-react';
 import {
   useSellerMe,
   useHealth,
+  useConnectFacebook,
   useDisconnectFacebook,
   useWebhookToggle,
   useDisconnectSheets,
 } from '@/lib/queries/integrations';
-
-const API_URL = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:3000';
+import { api } from '@/lib/api-client';
 
 function StatusDot({ online }: { online: boolean }) {
   return (
@@ -22,34 +33,40 @@ function StatusDot({ online }: { online: boolean }) {
 export default function IntegrationsPage() {
   const { data: seller, isLoading: sellerLoading } = useSellerMe();
   const { data: health, isLoading: healthLoading } = useHealth();
+  const connectFb = useConnectFacebook();
   const disconnectFb = useDisconnectFacebook();
   const webhookToggle = useWebhookToggle();
   const disconnectSheets = useDisconnectSheets();
 
-  const fbConnected = !!seller?.facebook;
-  const sheetsConnected = !!seller?.sheets;
+  // Facebook connect form state
+  const [showFbForm, setShowFbForm] = useState(false);
+  const [fbPageId, setFbPageId] = useState('');
+  const [fbToken, setFbToken] = useState('');
+  const [fbError, setFbError] = useState('');
+
+  const fbConnected = !!seller?.facebookPageId;
+  const sheetsConnected = !!seller?.googleSheetConnected;
   const ragOnline = health?.deps?.ragEngine?.status === 'ok';
 
-  function connectFacebook() {
-    // Redirect browser to core-api Facebook OAuth entry point.
-    // Token is sent as a cookie (jba_auth) which the server reads on redirect.
-    window.location.href = `${API_URL}/seller/connect-facebook`;
+  async function handleFbConnect(e: React.FormEvent) {
+    e.preventDefault();
+    setFbError('');
+    try {
+      await connectFb.mutateAsync({ pageId: fbPageId.trim(), pageAccessToken: fbToken.trim() });
+      setShowFbForm(false);
+      setFbPageId('');
+      setFbToken('');
+    } catch (err) {
+      setFbError((err as Error).message || 'Connection failed. Check your Page ID and token.');
+    }
   }
 
   async function connectSheets() {
-    // Get signed OAuth URL from server then redirect.
     try {
-      const data = await fetch(`${API_URL}/seller/connect-sheets/url`, {
-        headers: {
-          Authorization: `Bearer ${document.cookie
-            .split(';')
-            .find((c) => c.trim().startsWith('jba_auth='))
-            ?.split('=')[1] ?? ''}`,
-        },
-      }).then((r) => r.json()) as { url?: string };
+      const data = await api.get<{ url?: string }>('/seller/connect-sheets/url');
       if (data.url) window.location.href = data.url;
-    } catch {
-      alert('Could not get Google Sheets auth URL. Check API is running.');
+    } catch (err) {
+      alert((err as Error).message || 'Could not get Google Sheets auth URL. Check API is running.');
     }
   }
 
@@ -86,13 +103,13 @@ export default function IntegrationsPage() {
             {fbConnected ? (
               <div className="space-y-4">
                 <div className="grid grid-cols-2 gap-3">
-                  <InfoCell label="Page" value={seller.facebook!.pageName} />
-                  <InfoCell label="Page ID" value={seller.facebook!.pageId} mono />
+                  <InfoCell label="Page" value={seller!.facebookPageName ?? '—'} />
+                  <InfoCell label="Page ID" value={seller!.facebookPageId!} mono />
                   <InfoCell
                     label="Webhook"
                     value={
                       <span className="flex items-center gap-1.5">
-                        {seller.facebook!.webhookSubscribed ? (
+                        {seller!.webhookSubscribed ? (
                           <><CheckCircle size={13} className="text-green-500" /><span>Subscribed</span></>
                         ) : (
                           <><XCircle size={13} className="text-gray-400" /><span>Not subscribed</span></>
@@ -103,12 +120,12 @@ export default function IntegrationsPage() {
                 </div>
                 <div className="flex flex-wrap gap-2 pt-1">
                   <button
-                    onClick={() => webhookToggle.mutate({ subscribe: !seller.facebook!.webhookSubscribed })}
+                    onClick={() => webhookToggle.mutate({ subscribe: !seller!.webhookSubscribed })}
                     disabled={webhookToggle.isPending}
                     className="flex items-center gap-1.5 px-3.5 py-2 rounded-lg border border-[#EDE9FE] text-sm font-medium text-[#6B7280] hover:bg-[#F9FAFB] disabled:opacity-50"
                   >
                     <RefreshCw size={13} className={webhookToggle.isPending ? 'animate-spin' : ''} />
-                    {seller.facebook!.webhookSubscribed ? 'Unsubscribe webhook' : 'Subscribe webhook'}
+                    {seller!.webhookSubscribed ? 'Unsubscribe webhook' : 'Subscribe webhook'}
                   </button>
                   <button
                     onClick={() => {
@@ -124,13 +141,70 @@ export default function IntegrationsPage() {
                   </button>
                 </div>
               </div>
+            ) : showFbForm ? (
+              <form onSubmit={(e) => { void handleFbConnect(e); }} className="space-y-3">
+                <div className="flex items-center justify-between mb-1">
+                  <p className="text-sm font-medium text-[#09090B]">Enter Facebook Page details</p>
+                  <button
+                    type="button"
+                    onClick={() => { setShowFbForm(false); setFbError(''); }}
+                    className="text-[#9CA3AF] hover:text-[#6B7280]"
+                  >
+                    <X size={16} />
+                  </button>
+                </div>
+                <div>
+                  <label className="block text-xs font-medium text-[#6B7280] mb-1">Facebook Page ID</label>
+                  <input
+                    type="text"
+                    required
+                    value={fbPageId}
+                    onChange={(e) => setFbPageId(e.target.value)}
+                    placeholder="e.g. 123456789012345"
+                    className="w-full px-3 py-2 text-sm border border-[#EDE9FE] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#7D39EB]/30 focus:border-[#7D39EB]"
+                  />
+                  <p className="text-xs text-[#9CA3AF] mt-1">
+                    Found at facebook.com/your-page → About → Page ID
+                  </p>
+                </div>
+                <div>
+                  <label className="block text-xs font-medium text-[#6B7280] mb-1">Page Access Token</label>
+                  <input
+                    type="password"
+                    required
+                    value={fbToken}
+                    onChange={(e) => setFbToken(e.target.value)}
+                    placeholder="EAAxxxx…"
+                    className="w-full px-3 py-2 text-sm border border-[#EDE9FE] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#7D39EB]/30 focus:border-[#7D39EB]"
+                  />
+                  <p className="text-xs text-[#9CA3AF] mt-1">
+                    Generate from Meta for Developers → Graph API Explorer
+                  </p>
+                </div>
+                {fbError && (
+                  <p className="text-xs text-red-600 bg-red-50 border border-red-100 rounded-lg px-3 py-2">
+                    {fbError}
+                  </p>
+                )}
+                <button
+                  type="submit"
+                  disabled={connectFb.isPending}
+                  className="flex items-center gap-2 px-4 py-2.5 rounded-lg bg-[#1877F2] text-white text-sm font-medium hover:bg-[#1565D8] disabled:opacity-60 transition-colors"
+                >
+                  {connectFb.isPending ? (
+                    <><RefreshCw size={14} className="animate-spin" /> Connecting…</>
+                  ) : (
+                    <><Globe size={14} /> Connect Page</>
+                  )}
+                </button>
+              </form>
             ) : (
               <div>
                 <p className="text-sm text-[#6B7280] mb-3">
                   Connect your Facebook Page to start receiving and replying to Messenger orders automatically.
                 </p>
                 <button
-                  onClick={connectFacebook}
+                  onClick={() => setShowFbForm(true)}
                   className="flex items-center gap-2 px-4 py-2.5 rounded-lg bg-[#1877F2] text-white text-sm font-medium hover:bg-[#1565D8] transition-colors"
                 >
                   <Globe size={15} />
@@ -161,27 +235,22 @@ export default function IntegrationsPage() {
             {sheetsConnected ? (
               <div className="space-y-4">
                 <div className="grid grid-cols-2 gap-3">
-                  <InfoCell label="Sheet ID" value={seller.sheets!.spreadsheetId} mono />
-                  {seller.sheets!.lastSyncAt && (
-                    <InfoCell
-                      label="Last sync"
-                      value={new Date(seller.sheets!.lastSyncAt).toLocaleString('en-GB', {
-                        dateStyle: 'medium',
-                        timeStyle: 'short',
-                      })}
-                    />
+                  {seller?.googleSheetUrl && (
+                    <InfoCell label="Sheet URL" value="Google Sheet" />
                   )}
                 </div>
                 <div className="flex flex-wrap gap-2 pt-1">
-                  <a
-                    href={seller.sheets!.spreadsheetUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center gap-1.5 px-3.5 py-2 rounded-lg border border-[#EDE9FE] text-sm font-medium text-[#6B7280] hover:bg-[#F9FAFB]"
-                  >
-                    <ExternalLink size={13} />
-                    Open Sheet
-                  </a>
+                  {seller?.googleSheetUrl && (
+                    <a
+                      href={seller.googleSheetUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex items-center gap-1.5 px-3.5 py-2 rounded-lg border border-[#EDE9FE] text-sm font-medium text-[#6B7280] hover:bg-[#F9FAFB]"
+                    >
+                      <ExternalLink size={13} />
+                      Open Sheet
+                    </a>
+                  )}
                   <button
                     onClick={() => {
                       if (confirm('Disconnect Google Sheets?')) {
@@ -199,7 +268,7 @@ export default function IntegrationsPage() {
             ) : (
               <div>
                 <p className="text-sm text-[#6B7280] mb-3">
-                  Orders are auto-saved to a "jobabai Orders" sheet in your Google Drive after confirmation.
+                  Orders are auto-saved to a &ldquo;jobabai Orders&rdquo; sheet in your Google Drive after confirmation.
                 </p>
                 <button
                   onClick={() => { void connectSheets(); }}

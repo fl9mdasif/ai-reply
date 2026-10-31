@@ -1,22 +1,19 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { api } from '@/lib/api-client';
 
+// Matches seller.service.ts toProfile() — flat fields, no nested objects
 export interface SellerMe {
   sellerId: string;
   businessName: string;
   email: string;
   role: string;
   plan?: string;
-  facebook?: {
-    pageId: string;
-    pageName: string;
-    webhookSubscribed: boolean;
-  };
-  sheets?: {
-    spreadsheetId: string;
-    spreadsheetUrl: string;
-    lastSyncAt?: string;
-  };
+  facebookPageId?: string;
+  facebookPageName?: string;
+  webhookSubscribed: boolean;
+  googleSheetConnected: boolean;
+  googleSheetUrl?: string;
+  fallbackMessage?: string;
 }
 
 export interface HealthStatus {
@@ -42,6 +39,15 @@ export function useHealth() {
   });
 }
 
+export function useConnectFacebook() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (data: { pageId: string; pageAccessToken: string }) =>
+      api.post('/seller/connect-facebook', data),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ['seller', 'me'] }),
+  });
+}
+
 export function useDisconnectFacebook() {
   const qc = useQueryClient();
   return useMutation({
@@ -54,9 +60,7 @@ export function useWebhookToggle() {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: ({ subscribe }: { subscribe: boolean }) =>
-      subscribe
-        ? api.post('/seller/facebook/subscribe', {})
-        : api.post('/seller/facebook/unsubscribe', {}),
+      api.patch('/seller/facebook/webhook', { subscribe }),
     onSuccess: () => qc.invalidateQueries({ queryKey: ['seller', 'me'] }),
   });
 }

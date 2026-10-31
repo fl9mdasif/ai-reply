@@ -7,6 +7,7 @@ import {
   disconnectFacebook,
   getMe,
   patchMe,
+  toggleWebhookSubscription,
 } from './seller.service.js';
 
 export async function getMeHandler(req: Request, res: Response): Promise<void> {
@@ -28,6 +29,16 @@ export async function postConnectFacebookHandler(req: Request, res: Response): P
 
 export async function deleteConnectFacebookHandler(req: Request, res: Response): Promise<void> {
   const result = await disconnectFacebook(req.sellerId);
+  res.status(200).json(result);
+}
+
+export async function patchFacebookWebhookHandler(req: Request, res: Response): Promise<void> {
+  const { subscribe } = req.body as { subscribe?: unknown };
+  if (typeof subscribe !== 'boolean') {
+    res.status(400).json({ error: { message: '`subscribe` must be a boolean' } });
+    return;
+  }
+  const result = await toggleWebhookSubscription(req.sellerId, subscribe);
   res.status(200).json(result);
 }
 
