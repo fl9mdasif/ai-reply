@@ -190,11 +190,11 @@ export async function handleFacebookOAuthCallback(
     autoConnected: false,
   };
 
-  if (pages.length === 1) {
-    // Auto-connect the only page
+  const [onlyPage] = pages;
+  if (pages.length === 1 && onlyPage) {
     await connectFacebook(sellerId, {
-      pageId: pages[0].id,
-      pageAccessToken: pages[0].access_token,
+      pageId: onlyPage.id,
+      pageAccessToken: onlyPage.access_token,
     });
     result.autoConnected = true;
   }

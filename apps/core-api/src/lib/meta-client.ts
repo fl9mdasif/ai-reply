@@ -29,15 +29,23 @@ export async function getGraphPageName(pageId: string, accessToken: string): Pro
     throw new UpstreamError('Could not reach Facebook to verify the Page token');
   }
 
-  if (!response.ok) {
-    throw new ValidationError('Invalid Facebook Page access token');
+  if (response.ok) {
+    const body = (await response.json()) as { name?: string };
+    if (body.name) return body.name;
   }
 
-  const body = (await response.json()) as { name?: string };
-  if (!body.name) {
+  // Reading the name needs pages_read_engagement; without it the token can
+  // still be valid for messaging, so verify against subscribed_apps instead.
+  let fallback: Response;
+  try {
+    fallback = await graphFetch(`/${pageId}/subscribed_apps`, accessToken);
+  } catch {
+    throw new UpstreamError('Could not reach Facebook to verify the Page token');
+  }
+  if (!fallback.ok) {
     throw new ValidationError('Invalid Facebook Page access token');
   }
-  return body.name;
+  return `Facebook Page ${pageId}`;
 }
 
 // SEL-4: subscribes the app to the Page's messages field. Best-effort — a
