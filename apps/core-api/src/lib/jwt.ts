@@ -25,6 +25,25 @@ export function verifySellerToken(token: string): SellerTokenPayload {
 // Google OAuth consent round trip. The callback that verifies this is built
 // in M7; this half just needs to issue and (later) verify the same token.
 const OAUTH_STATE_PURPOSE = 'sheets-oauth';
+const FB_OAUTH_STATE_PURPOSE = 'facebook-oauth';
+
+export function signFacebookOAuthState(sellerId: string): string {
+  return jwt.sign({ sellerId, purpose: FB_OAUTH_STATE_PURPOSE }, env.JWT_SECRET, {
+    expiresIn: '10m',
+  });
+}
+
+export function verifyFacebookOAuthState(state: string): { sellerId: string } {
+  const decoded = jwt.verify(state, env.JWT_SECRET);
+  if (
+    typeof decoded === 'string' ||
+    decoded.purpose !== FB_OAUTH_STATE_PURPOSE ||
+    typeof decoded.sellerId !== 'string'
+  ) {
+    throw new Error('Malformed Facebook OAuth state');
+  }
+  return { sellerId: decoded.sellerId };
+}
 
 export function signOAuthState(sellerId: string): string {
   return jwt.sign({ sellerId, purpose: OAUTH_STATE_PURPOSE }, env.JWT_SECRET, {

@@ -39,6 +39,24 @@ export function useHealth() {
   });
 }
 
+export function useFacebookAuthUrl() {
+  return useQuery({
+    queryKey: ['seller', 'facebook', 'auth-url'],
+    queryFn: () => api.get<{ url: string }>('/seller/facebook/auth-url'),
+    enabled: false, // fetch on demand only
+    retry: false,
+  });
+}
+
+export function useConnectFacebookPage() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (data: { pageId: string; pageAccessToken: string }) =>
+      api.post('/seller/facebook/connect-page', data),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ['seller', 'me'] }),
+  });
+}
+
 export function useConnectFacebook() {
   const qc = useQueryClient();
   return useMutation({

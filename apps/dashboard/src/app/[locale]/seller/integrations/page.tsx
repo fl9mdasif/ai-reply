@@ -1,6 +1,7 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect, useCallback } from 'react';
+import { useSearchParams, useRouter } from 'next/navigation';
 import {
   Globe,
   FileSpreadsheet,
@@ -11,16 +12,24 @@ import {
   RefreshCw,
   Link2Off,
   X,
+  ChevronRight,
 } from 'lucide-react';
 import {
   useSellerMe,
   useHealth,
-  useConnectFacebook,
+  useFacebookAuthUrl,
+  useConnectFacebookPage,
   useDisconnectFacebook,
   useWebhookToggle,
   useDisconnectSheets,
 } from '@/lib/queries/integrations';
 import { api } from '@/lib/api-client';
+
+interface FacebookPageOption {
+  id: string;
+  name: string;
+  access_token: string;
+}
 
 function StatusDot({ online }: { online: boolean }) {
   return (
@@ -30,34 +39,96 @@ function StatusDot({ online }: { online: boolean }) {
   );
 }
 
+function Toast({ message, type, onClose }: { message: string; type: 'success' | 'error'; onClose: () => void }) {
+  useEffect(() => {
+    const t = setTimeout(onClose, 4000);
+    return () => clearTimeout(t);
+  }, [onClose]);
+
+  return (
+    <div className={`fixed top-5 right-5 z-50 flex items-center gap-3 px-4 py-3 rounded-xl shadow-lg text-sm font-medium transition-all
+      ${type === 'success' ? 'bg-green-50 border border-green-200 text-green-800' : 'bg-red-50 border border-red-200 text-red-800'}`}>
+      {type === 'success' ? <CheckCircle size={16} /> : <XCircle size={16} />}
+      {message}
+      <button onClick={onClose} className="ml-2 opacity-60 hover:opacity-100"><X size={14} /></button>
+    </div>
+  );
+}
+
 export default function IntegrationsPage() {
-  const { data: seller, isLoading: sellerLoading } = useSellerMe();
+  const searchParams = useSearchParams();
+  const router = useRouter();
+
+  const { data: seller, isLoading: sellerLoading, refetch: refetchSeller } = useSellerMe();
   const { data: health, isLoading: healthLoading } = useHealth();
-  const connectFb = useConnectFacebook();
+  const { refetch: fetchAuthUrl } = useFacebookAuthUrl();
+  const connectPage = useConnectFacebookPage();
   const disconnectFb = useDisconnectFacebook();
   const webhookToggle = useWebhookToggle();
   const disconnectSheets = useDisconnectSheets();
 
-  // Facebook connect form state
-  const [showFbForm, setShowFbForm] = useState(false);
-  const [fbPageId, setFbPageId] = useState('');
-  const [fbToken, setFbToken] = useState('');
-  const [fbError, setFbError] = useState('');
+  const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
+  const [fbLoading, setFbLoading] = useState(false);
+  // Multiple pages picker
+  const [pageOptions, setPageOptions] = useState<FacebookPageOption[]>([]);
+  const [showPagePicker, setShowPagePicker] = useState(false);
 
-  const fbConnected = !!seller?.facebookPageId;
-  const sheetsConnected = !!seller?.googleSheetConnected;
-  const ragOnline = health?.deps?.ragEngine?.status === 'ok';
+  const showToast = useCallback((message: string, type: 'success' | 'error') => {
+    setToast({ message, type });
+  }, []);
 
-  async function handleFbConnect(e: React.FormEvent) {
-    e.preventDefault();
-    setFbError('');
+  // Handle OAuth callback result from URL params
+  useEffect(() => {
+    const fb = searchParams.get('fb');
+    const pagesParam = searchParams.get('pages');
+
+    if (fb === 'connected') {
+      void refetchSeller();
+      showToast('Facebook Page connected!', 'success');
+      router.replace('/en/seller/integrations');
+    } else if (fb === 'pick' && pagesParam) {
+      try {
+        const pages = JSON.parse(decodeURIComponent(pagesParam)) as FacebookPageOption[];
+        setPageOptions(pages);
+        setShowPagePicker(true);
+        router.replace('/en/seller/integrations');
+      } catch {
+        showToast('Failed to read page list from Facebook. Try again.', 'error');
+      }
+    } else if (fb === 'denied') {
+      showToast('Facebook connection cancelled.', 'error');
+      router.replace('/en/seller/integrations');
+    } else if (fb === 'error') {
+      showToast('Facebook connection failed. Try again.', 'error');
+      router.replace('/en/seller/integrations');
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  async function startFacebookOAuth() {
+    setFbLoading(true);
     try {
-      await connectFb.mutateAsync({ pageId: fbPageId.trim(), pageAccessToken: fbToken.trim() });
-      setShowFbForm(false);
-      setFbPageId('');
-      setFbToken('');
+      const result = await fetchAuthUrl();
+      if (result.data?.url) {
+        window.location.href = result.data.url;
+      } else {
+        showToast('Could not get Facebook auth URL. Check META_APP_ID is configured.', 'error');
+        setFbLoading(false);
+      }
+    } catch {
+      showToast('Facebook OAuth not configured on server.', 'error');
+      setFbLoading(false);
+    }
+  }
+
+  async function pickPage(page: FacebookPageOption) {
+    try {
+      await connectPage.mutateAsync({ pageId: page.id, pageAccessToken: page.access_token });
+      setShowPagePicker(false);
+      setPageOptions([]);
+      showToast(`${page.name} connected!`, 'success');
     } catch (err) {
-      setFbError((err as Error).message || 'Connection failed. Check your Page ID and token.');
+      showToast((err as Error).message || 'Failed to connect page.', 'error');
     }
   }
 
@@ -66,9 +137,13 @@ export default function IntegrationsPage() {
       const data = await api.get<{ url?: string }>('/seller/connect-sheets/url');
       if (data.url) window.location.href = data.url;
     } catch (err) {
-      alert((err as Error).message || 'Could not get Google Sheets auth URL. Check API is running.');
+      showToast((err as Error).message || 'Google Sheets not configured on server.', 'error');
     }
   }
+
+  const fbConnected = !!seller?.facebookPageId;
+  const sheetsConnected = !!seller?.googleSheetConnected;
+  const ragOnline = health?.deps?.ragEngine?.status === 'ok';
 
   if (sellerLoading) {
     return <p className="text-[#9CA3AF] text-sm">Loading…</p>;
@@ -76,6 +151,43 @@ export default function IntegrationsPage() {
 
   return (
     <div className="max-w-2xl">
+      {toast && (
+        <Toast message={toast.message} type={toast.type} onClose={() => setToast(null)} />
+      )}
+
+      {/* Page picker modal */}
+      {showPagePicker && (
+        <div className="fixed inset-0 z-40 bg-black/40 flex items-center justify-center p-4">
+          <div className="bg-white rounded-2xl shadow-2xl w-full max-w-sm p-6">
+            <div className="flex items-center justify-between mb-4">
+              <p className="font-semibold text-[#09090B]">Choose a Facebook Page</p>
+              <button onClick={() => setShowPagePicker(false)} className="text-[#9CA3AF] hover:text-[#6B7280]">
+                <X size={18} />
+              </button>
+            </div>
+            <p className="text-sm text-[#6B7280] mb-4">
+              Multiple pages found. Pick the one you want to connect to jobabai.
+            </p>
+            <div className="space-y-2">
+              {pageOptions.map((page) => (
+                <button
+                  key={page.id}
+                  onClick={() => { void pickPage(page); }}
+                  disabled={connectPage.isPending}
+                  className="w-full flex items-center justify-between px-4 py-3 rounded-xl border border-[#EDE9FE] hover:bg-[#F8F7FF] hover:border-[#7D39EB] transition-all text-left disabled:opacity-50"
+                >
+                  <div>
+                    <p className="font-medium text-[#09090B] text-sm">{page.name}</p>
+                    <p className="text-xs text-[#9CA3AF] font-mono">{page.id}</p>
+                  </div>
+                  <ChevronRight size={16} className="text-[#9CA3AF]" />
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
+
       <div className="mb-6">
         <h1 className="text-2xl font-bold text-[#09090B]">Integrations</h1>
         <p className="text-[#6B7280] text-sm mt-0.5">Connect your channels and services</p>
@@ -83,7 +195,7 @@ export default function IntegrationsPage() {
 
       <div className="space-y-4">
 
-        {/* ── Facebook Meta ── */}
+        {/* ── Facebook ── */}
         <div className="bg-white rounded-xl border border-[#EDE9FE] overflow-hidden">
           <div className="px-5 py-4 border-b border-[#EDE9FE] flex items-center gap-3">
             <div className="w-9 h-9 rounded-lg bg-[#1877F2]/10 flex items-center justify-center">
@@ -141,75 +253,25 @@ export default function IntegrationsPage() {
                   </button>
                 </div>
               </div>
-            ) : showFbForm ? (
-              <form onSubmit={(e) => { void handleFbConnect(e); }} className="space-y-3">
-                <div className="flex items-center justify-between mb-1">
-                  <p className="text-sm font-medium text-[#09090B]">Enter Facebook Page details</p>
-                  <button
-                    type="button"
-                    onClick={() => { setShowFbForm(false); setFbError(''); }}
-                    className="text-[#9CA3AF] hover:text-[#6B7280]"
-                  >
-                    <X size={16} />
-                  </button>
-                </div>
-                <div>
-                  <label className="block text-xs font-medium text-[#6B7280] mb-1">Facebook Page ID</label>
-                  <input
-                    type="text"
-                    required
-                    value={fbPageId}
-                    onChange={(e) => setFbPageId(e.target.value)}
-                    placeholder="e.g. 123456789012345"
-                    className="w-full px-3 py-2 text-sm border border-[#EDE9FE] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#7D39EB]/30 focus:border-[#7D39EB]"
-                  />
-                  <p className="text-xs text-[#9CA3AF] mt-1">
-                    Found at facebook.com/your-page → About → Page ID
-                  </p>
-                </div>
-                <div>
-                  <label className="block text-xs font-medium text-[#6B7280] mb-1">Page Access Token</label>
-                  <input
-                    type="password"
-                    required
-                    value={fbToken}
-                    onChange={(e) => setFbToken(e.target.value)}
-                    placeholder="EAAxxxx…"
-                    className="w-full px-3 py-2 text-sm border border-[#EDE9FE] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#7D39EB]/30 focus:border-[#7D39EB]"
-                  />
-                  <p className="text-xs text-[#9CA3AF] mt-1">
-                    Generate from Meta for Developers → Graph API Explorer
-                  </p>
-                </div>
-                {fbError && (
-                  <p className="text-xs text-red-600 bg-red-50 border border-red-100 rounded-lg px-3 py-2">
-                    {fbError}
-                  </p>
-                )}
-                <button
-                  type="submit"
-                  disabled={connectFb.isPending}
-                  className="flex items-center gap-2 px-4 py-2.5 rounded-lg bg-[#1877F2] text-white text-sm font-medium hover:bg-[#1565D8] disabled:opacity-60 transition-colors"
-                >
-                  {connectFb.isPending ? (
-                    <><RefreshCw size={14} className="animate-spin" /> Connecting…</>
-                  ) : (
-                    <><Globe size={14} /> Connect Page</>
-                  )}
-                </button>
-              </form>
             ) : (
               <div>
-                <p className="text-sm text-[#6B7280] mb-3">
+                <p className="text-sm text-[#6B7280] mb-4">
                   Connect your Facebook Page to start receiving and replying to Messenger orders automatically.
                 </p>
                 <button
-                  onClick={() => setShowFbForm(true)}
-                  className="flex items-center gap-2 px-4 py-2.5 rounded-lg bg-[#1877F2] text-white text-sm font-medium hover:bg-[#1565D8] transition-colors"
+                  onClick={() => { void startFacebookOAuth(); }}
+                  disabled={fbLoading}
+                  className="flex items-center gap-2 px-5 py-3 rounded-xl bg-[#1877F2] text-white text-sm font-semibold hover:bg-[#1565D8] disabled:opacity-60 transition-colors shadow-sm"
                 >
-                  <Globe size={15} />
-                  Connect Facebook Page
+                  {fbLoading ? (
+                    <><RefreshCw size={15} className="animate-spin" /> Redirecting to Facebook…</>
+                  ) : (
+                    <><Globe size={15} /> Connect with Facebook</>
+                  )}
                 </button>
+                <p className="text-xs text-[#9CA3AF] mt-2">
+                  You&apos;ll be taken to Facebook to log in and pick your Page — no token copying needed.
+                </p>
               </div>
             )}
           </div>
@@ -234,12 +296,7 @@ export default function IntegrationsPage() {
           <div className="px-5 py-4">
             {sheetsConnected ? (
               <div className="space-y-4">
-                <div className="grid grid-cols-2 gap-3">
-                  {seller?.googleSheetUrl && (
-                    <InfoCell label="Sheet URL" value="Google Sheet" />
-                  )}
-                </div>
-                <div className="flex flex-wrap gap-2 pt-1">
+                <div className="flex flex-wrap gap-2">
                   {seller?.googleSheetUrl && (
                     <a
                       href={seller.googleSheetUrl}
@@ -267,22 +324,25 @@ export default function IntegrationsPage() {
               </div>
             ) : (
               <div>
-                <p className="text-sm text-[#6B7280] mb-3">
+                <p className="text-sm text-[#6B7280] mb-4">
                   Orders are auto-saved to a &ldquo;jobabai Orders&rdquo; sheet in your Google Drive after confirmation.
                 </p>
                 <button
                   onClick={() => { void connectSheets(); }}
-                  className="flex items-center gap-2 px-4 py-2.5 rounded-lg bg-green-600 text-white text-sm font-medium hover:bg-green-700 transition-colors"
+                  className="flex items-center gap-2 px-5 py-3 rounded-xl bg-green-600 text-white text-sm font-semibold hover:bg-green-700 transition-colors shadow-sm"
                 >
                   <FileSpreadsheet size={15} />
                   Connect Google Sheets
                 </button>
+                <p className="text-xs text-[#9CA3AF] mt-2">
+                  You&apos;ll be taken to Google to sign in and grant access — no manual setup needed.
+                </p>
               </div>
             )}
           </div>
         </div>
 
-        {/* ── RAG Engine ── */}
+        {/* ── AI Engine ── */}
         <div className="bg-white rounded-xl border border-[#EDE9FE] overflow-hidden">
           <div className="px-5 py-4 border-b border-[#EDE9FE] flex items-center gap-3">
             <div className="w-9 h-9 rounded-lg bg-[#7D39EB]/10 flex items-center justify-center">
@@ -325,7 +385,7 @@ export default function IntegrationsPage() {
               )}
             </div>
             <p className="text-xs text-[#9CA3AF] mt-3">
-              This is a managed service. Contact support if the engine shows offline for more than 5 minutes.
+              This is a managed service. Contact support if it shows offline for more than 5 minutes.
             </p>
           </div>
         </div>

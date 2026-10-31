@@ -2,7 +2,15 @@ import { env } from '../../config/env.js';
 import { decrypt, encrypt } from '../../lib/crypto.js';
 import { ConflictError, NotFoundError, UpstreamError } from '../../lib/errors.js';
 import { signOAuthState } from '../../lib/jwt.js';
-import { getGraphPageName, subscribePageToApp, unsubscribePageFromApp } from '../../lib/meta-client.js';
+import {
+  exchangeCodeForUserToken,
+  getGraphPageName,
+  getLongLivedUserToken,
+  getPageAccounts,
+  subscribePageToApp,
+  unsubscribePageFromApp,
+} from '../../lib/meta-client.js';
+import { signFacebookOAuthState, verifyFacebookOAuthState } from '../../lib/jwt.js';
 import type { SellerDoc } from '../../lib/db.js';
 import {
   connectFacebookPage,
@@ -134,6 +142,74 @@ export async function disconnectFacebook(sellerId: string): Promise<{ success: t
   }
   await disconnectFacebookPage(sellerId);
   return { success: true };
+}
+
+export interface FacebookOAuthResult {
+  pages: Array<{ id: string; name: string }>;
+  // If only one page, it was auto-connected; pages array is still returned for display.
+  autoConnected: boolean;
+}
+
+// Build the Facebook OAuth consent URL. Requires META_APP_ID + META_FACEBOOK_REDIRECT_URI.
+export function buildFacebookAuthUrl(sellerId: string): { url: string } {
+  if (!env.META_APP_ID || !env.META_FACEBOOK_REDIRECT_URI) {
+    throw new UpstreamError('Facebook OAuth is not configured (META_APP_ID / META_FACEBOOK_REDIRECT_URI missing)');
+  }
+  const state = signFacebookOAuthState(sellerId);
+  const params = new URLSearchParams({
+    client_id: env.META_APP_ID,
+    redirect_uri: env.META_FACEBOOK_REDIRECT_URI,
+    state,
+    scope: 'pages_messaging,pages_read_engagement,pages_manage_metadata',
+    response_type: 'code',
+  });
+  return { url: `https://www.facebook.com/dialog/oauth?${params.toString()}` };
+}
+
+// Handle the OAuth callback: exchange code → long-lived token → get pages → connect if one.
+export async function handleFacebookOAuthCallback(
+  code: string,
+  state: string,
+): Promise<{ sellerId: string; result: FacebookOAuthResult }> {
+  if (!env.META_FACEBOOK_REDIRECT_URI) {
+    throw new UpstreamError('META_FACEBOOK_REDIRECT_URI not configured');
+  }
+
+  const { sellerId } = verifyFacebookOAuthState(state);
+
+  const shortLived = await exchangeCodeForUserToken(code, env.META_FACEBOOK_REDIRECT_URI);
+  const longLived = await getLongLivedUserToken(shortLived);
+  const pages = await getPageAccounts(longLived);
+
+  if (pages.length === 0) {
+    throw new ConflictError('No Facebook Pages found. Make sure you manage at least one Page.');
+  }
+
+  const result: FacebookOAuthResult = {
+    pages: pages.map((p) => ({ id: p.id, name: p.name })),
+    autoConnected: false,
+  };
+
+  if (pages.length === 1) {
+    // Auto-connect the only page
+    await connectFacebook(sellerId, {
+      pageId: pages[0].id,
+      pageAccessToken: pages[0].access_token,
+    });
+    result.autoConnected = true;
+  }
+  // For multiple pages: return page list; seller picks via separate endpoint
+
+  return { sellerId, result };
+}
+
+// Connect a specific page after the seller picks from the OAuth page list.
+export async function connectFacebookPageFromOAuth(
+  sellerId: string,
+  pageId: string,
+  pageAccessToken: string,
+): Promise<ConnectFacebookResult> {
+  return connectFacebook(sellerId, { pageId, pageAccessToken });
 }
 
 // SEL-7: signed state carrying sellerId, verified by the M7 callback.

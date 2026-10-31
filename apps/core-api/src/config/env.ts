@@ -25,9 +25,11 @@ const envSchema = z.object({
   REGISTRATION_MODE: z.enum(['invite', 'open']).default('invite'),
   INVITE_CODE: z.string().optional(),
 
+  META_APP_ID: z.string().optional(),
   META_APP_SECRET: z.string().min(1, 'META_APP_SECRET is required'),
   META_VERIFY_TOKEN: z.string().min(1, 'META_VERIFY_TOKEN is required'),
   META_GRAPH_VERSION: z.string().default('v21.0'),
+  META_FACEBOOK_REDIRECT_URI: z.string().optional(),
 
   RAG_ENGINE_URL: z.string().url('RAG_ENGINE_URL must be a valid URL'),
   RAG_ENGINE_INTERNAL_TOKEN: z.string().min(1, 'RAG_ENGINE_INTERNAL_TOKEN is required'),
