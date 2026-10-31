@@ -431,46 +431,46 @@ footer { margin-top:24px; padding-top:16px; border-top:1px solid var(--border); 
   ══════════════════════════════════════════════════════════ -->
   <div class="tab-panel" id="tab-rag">
     <div class="hero">
-      <div class="hero-figure"><span class="num">0/30</span><span class="pct pct-rag">0%</span></div>
+      <div class="hero-figure"><span class="num">16/35</span><span class="pct pct-rag">46%</span></div>
       <div class="hero-detail">
         <div class="label">Requirements verified — <code>apps/rag-engine</code> (Python / FastAPI)</div>
-        <div class="hero-track"><span class="track-rag" style="width:0%"></span></div>
+        <div class="hero-track"><span class="track-rag" style="width:46%"></span></div>
       </div>
     </div>
 
     <div class="rail">
-      <div class="milestone todo">
+      <div class="milestone done">
         <div class="node node-rag">M0</div>
-        <details class="ms-card rag" id="r0">
-          <summary class="ms-head"><span class="chev"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 6 15 12 9 18"></polyline></svg></span><span class="ms-name">RE-M0 Scaffold</span><span class="ms-meta"><span class="ms-count">0/8</span><span class="pill todo">Not started</span></span></summary>
-          <div class="ms-track"><span style="width:0%"></span></div>
+        <details class="ms-card rag done" id="r0">
+          <summary class="ms-head"><span class="chev"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 6 15 12 9 18"></polyline></svg></span><span class="ms-name">RE-M0 Scaffold</span><span class="ms-meta"><span class="ms-count">8/8</span><span class="pill done">Done</span></span></summary>
+          <div class="ms-track"><span style="width:100%"></span></div>
           <ul class="req-list">
-            <li class="todo"><span class="check no"></span><span>RE-M0-1 <code>pyproject.toml</code>: fastapi, uvicorn[standard], openai, qdrant-client, pydantic-settings, structlog — dev: pytest, pytest-asyncio, httpx</span></li>
-            <li class="todo"><span class="check no"></span><span>RE-M0-2 <code>config/settings.py</code>: Pydantic BaseSettings, all env vars validated, app refuses to start on missing value</span></li>
-            <li class="todo"><span class="check no"></span><span>RE-M0-3 <code>middleware/auth.py</code>: FastAPI <code>Depends</code> checking <code>X-Internal-Token</code> header, returns 401 on mismatch</span></li>
-            <li class="todo"><span class="check no"></span><span>RE-M0-4 <code>main.py</code>: app factory, router mounts, global auth dependency, <code>/docs</code> only when <code>ENABLE_DOCS=true</code>, structured logging</span></li>
-            <li class="todo"><span class="check no"></span><span>RE-M0-5 <code>GET /health</code> → <code>{"status":"ok","service":"rag-engine"}</code> — no auth, zero external calls</span></li>
-            <li class="todo"><span class="check no"></span><span>RE-M0-6 <code>.env.example</code>: OPENAI_API_KEY, QDRANT_URL, QDRANT_API_KEY, QDRANT_COLLECTION_NAME, RAG_ENGINE_INTERNAL_TOKEN, PORT, LOG_LEVEL, OPENAI_EMBEDDING_MODEL, OPENAI_CHAT_MODEL, TOP_K, ENABLE_DOCS</span></li>
-            <li class="todo"><span class="check no"></span><span>RE-M0-7 <code>tests/conftest.py</code> + <code>tests/test_health.py</code>: health returns 200, missing token returns 401 on protected route</span></li>
-            <li class="todo"><span class="check no"></span><span>Checkpoint RE-M0: <code>pytest</code> passes, app boots with valid env, refuses on missing vars</span></li>
+            <li class="done"><span class="check yes">✓</span><span>RE-M0-1 <code>pyproject.toml</code>: fastapi, uvicorn[standard], openai, qdrant-client, pydantic-settings, structlog — dev: pytest, pytest-asyncio, httpx</span></li>
+            <li class="done"><span class="check yes">✓</span><span>RE-M0-2 <code>config/settings.py</code>: Pydantic BaseSettings, all env vars validated, app refuses to start on missing value</span></li>
+            <li class="done"><span class="check yes">✓</span><span>RE-M0-3 <code>middleware/auth.py</code>: FastAPI <code>Depends</code> checking <code>X-Internal-Token</code> header, returns 401 on mismatch</span></li>
+            <li class="done"><span class="check yes">✓</span><span>RE-M0-4 <code>main.py</code>: app factory, router mounts, global auth dependency, <code>/docs</code> only when <code>ENABLE_DOCS=true</code>, structured logging</span></li>
+            <li class="done"><span class="check yes">✓</span><span>RE-M0-5 <code>GET /health</code> → <code>{"status":"ok","service":"rag-engine"}</code> — no auth, zero external calls</span></li>
+            <li class="done"><span class="check yes">✓</span><span>RE-M0-6 <code>.env.example</code>: OPENAI_API_KEY, QDRANT_URL, QDRANT_API_KEY, QDRANT_COLLECTION_NAME, RAG_ENGINE_INTERNAL_TOKEN, PORT, LOG_LEVEL, OPENAI_EMBEDDING_MODEL, OPENAI_CHAT_MODEL, TOP_K, ENABLE_DOCS</span></li>
+            <li class="done"><span class="check yes">✓</span><span>RE-M0-7 <code>tests/conftest.py</code> + <code>tests/test_health.py</code>: health 200, missing token 401, 6 tests pass</span></li>
+            <li class="done"><span class="check yes">✓</span><span>Checkpoint RE-M0: pytest passes (6/6), app boots with valid env, refuses on missing vars</span></li>
           </ul>
         </details>
       </div>
 
-      <div class="milestone todo">
+      <div class="milestone done">
         <div class="node node-rag">M1</div>
-        <details class="ms-card rag" id="r1">
-          <summary class="ms-head"><span class="chev"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 6 15 12 9 18"></polyline></svg></span><span class="ms-name">RE-M1 Embed Endpoint</span><span class="ms-meta"><span class="ms-count">0/8</span><span class="pill todo">Not started</span></span></summary>
-          <div class="ms-track"><span style="width:0%"></span></div>
+        <details class="ms-card rag done" id="r1">
+          <summary class="ms-head"><span class="chev"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 6 15 12 9 18"></polyline></svg></span><span class="ms-name">RE-M1 Embed Endpoint</span><span class="ms-meta"><span class="ms-count">8/8</span><span class="pill done">Done</span></span></summary>
+          <div class="ms-track"><span style="width:100%"></span></div>
           <ul class="req-list">
-            <li class="todo"><span class="check no"></span><span>RE-M1-1 Pydantic models: <code>EmbedRequest {sellerId, productId, name, description?, faqEntries?}</code> → <code>EmbedResponse {chunksEmbedded: int}</code></span></li>
-            <li class="todo"><span class="check no"></span><span>RE-M1-2 <code>lib/chunker.py</code>: paragraph-level chunker for name + description + FAQ entries</span></li>
-            <li class="todo"><span class="check no"></span><span>RE-M1-3 <code>lib/openai_client.py</code>: async <code>embed_texts(texts)</code> using <code>text-embedding-3-small</code></span></li>
-            <li class="todo"><span class="check no"></span><span>RE-M1-4 <code>lib/qdrant_client.py</code>: <code>ensure_collection()</code> idempotent, <code>upsert_vectors()</code>, <code>delete_by_product()</code> — sellerId always in payload</span></li>
-            <li class="todo"><span class="check no"></span><span>RE-M1-5 <code>POST /embed</code>: chunk → embed → upsert Qdrant → return <code>{chunksEmbedded: N}</code></span></li>
-            <li class="todo"><span class="check no"></span><span>RE-M1-6 <code>DELETE /embed/{productId}?sellerId=</code>: delete all vectors matching sellerId+productId</span></li>
-            <li class="todo"><span class="check no"></span><span>RE-M1-7 <code>tests/test_embed.py</code>: happy path (mock OpenAI + Qdrant), empty description, FAQ-only, delete removes vectors</span></li>
-            <li class="todo"><span class="check no"></span><span>Checkpoint RE-M1: all embed tests pass; Qdrant collection created idempotently on startup</span></li>
+            <li class="done"><span class="check yes">✓</span><span>RE-M1-1 Pydantic models: <code>EmbedRequest {sellerId, productId, name, description?, faqEntries?}</code> → <code>EmbedResponse {chunksEmbedded: int}</code></span></li>
+            <li class="done"><span class="check yes">✓</span><span>RE-M1-2 <code>lib/chunker.py</code>: paragraph-level chunker for name + description + FAQ entries</span></li>
+            <li class="done"><span class="check yes">✓</span><span>RE-M1-3 <code>lib/openai_client.py</code>: async <code>embed_texts(texts)</code> using <code>text-embedding-3-small</code></span></li>
+            <li class="done"><span class="check yes">✓</span><span>RE-M1-4 <code>lib/qdrant_client.py</code>: <code>ensure_collection()</code> idempotent, <code>upsert_vectors()</code>, <code>delete_by_product()</code>, <code>search()</code> — sellerId always in payload filter</span></li>
+            <li class="done"><span class="check yes">✓</span><span>RE-M1-5 <code>POST /embed</code>: chunk → embed → upsert Qdrant → return <code>{chunksEmbedded: N}</code></span></li>
+            <li class="done"><span class="check yes">✓</span><span>RE-M1-6 <code>DELETE /embed/{productId}?sellerId=</code>: delete all vectors matching sellerId+productId</span></li>
+            <li class="done"><span class="check yes">✓</span><span>RE-M1-7 <code>tests/test_embed.py</code>: 11 tests — happy path, empty desc, FAQ-only, auth guards, validation (17 total pass)</span></li>
+            <li class="done"><span class="check yes">✓</span><span>Checkpoint RE-M1: all 17 tests pass; sellerId isolation enforced on every upsert and search</span></li>
           </ul>
         </details>
       </div>
@@ -539,12 +539,96 @@ footer { margin-top:24px; padding-top:16px; border-top:1px solid var(--border); 
         <div class="hero-track"><span class="track-dash" style="width:0%"></span></div>
       </div>
     </div>
-    <div class="not-started-banner">
-      <p class="big">Phase 4 — Not yet started</p>
-      <p>The seller dashboard starts after the Google Sheet becomes a bottleneck for sellers.<br>
-      Google Sheets is the interim dashboard by design during the pilot. This tab tracks progress once work begins.</p>
+    <div class="ms-rail">
+      <div class="rail-spine"></div>
+
+      <div class="node node-core">DA-M1</div>
+      <details class="ms-card done" id="da1" open>
+        <summary class="ms-head"><span class="chev"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 6 15 12 9 18"></polyline></svg></span><span class="ms-name">DA-M1 Dashboard scaffold + auth</span><span class="ms-meta"><span class="ms-count">5/5</span><span class="pill done">Done</span></span></summary>
+        <div class="ms-track"><span style="width:100%"></span></div>
+        <ul class="req-list">
+          <li class="done"><span class="check yes">✓</span><span>Next.js 14 dashboard app on port 3001</span></li>
+          <li class="done"><span class="check yes">✓</span><span>Login / register pages with JWT cookie auth</span></li>
+          <li class="done"><span class="check yes">✓</span><span>Seller sidebar layout (Overview, Catalog, Orders, Integrations, Conversations, Settings)</span></li>
+          <li class="done"><span class="check yes">✓</span><span>Admin sidebar layout with role guard</span></li>
+          <li class="done"><span class="check yes">✓</span><span>Middleware route protection by role (seller / admin)</span></li>
+        </ul>
+      </details>
+
+      <div class="node node-core">DA-M2</div>
+      <details class="ms-card done" id="da2">
+        <summary class="ms-head"><span class="chev"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 6 15 12 9 18"></polyline></svg></span><span class="ms-name">DA-M2 Seller overview + catalog</span><span class="ms-meta"><span class="ms-count">4/4</span><span class="pill done">Done</span></span></summary>
+        <div class="ms-track"><span style="width:100%"></span></div>
+        <ul class="req-list">
+          <li class="done"><span class="check yes">✓</span><span>Overview stats cards (orders / pending / confirmed / cancelled)</span></li>
+          <li class="done"><span class="check yes">✓</span><span>Catalog table with add / edit / delete / re-embed</span></li>
+          <li class="done"><span class="check yes">✓</span><span>CSV bulk import</span></li>
+          <li class="done"><span class="check yes">✓</span><span>Search + pagination</span></li>
+        </ul>
+      </details>
+
+      <div class="node node-core">DA-M3</div>
+      <details class="ms-card done" id="da3">
+        <summary class="ms-head"><span class="chev"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 6 15 12 9 18"></polyline></svg></span><span class="ms-name">DA-M3 Seller orders + risk display</span><span class="ms-meta"><span class="ms-count">4/4</span><span class="pill done">Done</span></span></summary>
+        <div class="ms-track"><span style="width:100%"></span></div>
+        <ul class="req-list">
+          <li class="done"><span class="check yes">✓</span><span>Orders table with risk-score badge (green / amber / red)</span></li>
+          <li class="done"><span class="check yes">✓</span><span>Status filter tabs (All / Pending / Confirmed / Cancelled)</span></li>
+          <li class="done"><span class="check yes">✓</span><span>Confirm / cancel row actions</span></li>
+          <li class="done"><span class="check yes">✓</span><span>Risk flag labels in Bangla</span></li>
+        </ul>
+      </details>
+
+      <div class="node node-core">DA-M4</div>
+      <details class="ms-card active" id="da4" open>
+        <summary class="ms-head"><span class="chev"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 6 15 12 9 18"></polyline></svg></span><span class="ms-name">DA-M4 Seller integrations page</span><span class="ms-meta"><span class="ms-count">6/7</span><span class="pill active">In progress</span></span></summary>
+        <div class="ms-track"><span style="width:86%"></span></div>
+        <ul class="req-list">
+          <li class="done"><span class="check yes">✓</span><span>Facebook Page connect — manual fields (Page ID + Access Token) shown by default</span></li>
+          <li class="done"><span class="check yes">✓</span><span>Facebook OAuth flow — <code>GET /seller/facebook/auth-url</code> → redirect → callback</span></li>
+          <li class="done"><span class="check yes">✓</span><span>Multi-page picker modal when seller manages multiple Pages</span></li>
+          <li class="done"><span class="check yes">✓</span><span>Webhook subscribe / unsubscribe toggle — <code>PATCH /seller/facebook/webhook</code></span></li>
+          <li class="done"><span class="check yes">✓</span><span>Facebook Page disconnect — <code>DELETE /seller/connect-facebook</code></span></li>
+          <li class="done"><span class="check yes">✓</span><span>Google Sheets connect via OAuth + disconnect</span></li>
+          <li class="todo"><span class="check no"></span><span>Meta App credentials in env (<code>META_APP_ID</code>, <code>META_FACEBOOK_REDIRECT_URI</code>) — pending seller setup</span></li>
+        </ul>
+      </details>
+
+      <div class="node node-core">DA-M5</div>
+      <details class="ms-card todo" id="da5">
+        <summary class="ms-head"><span class="chev"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 6 15 12 9 18"></polyline></svg></span><span class="ms-name">DA-M5 Conversations + Settings</span><span class="ms-meta"><span class="ms-count">0/4</span><span class="pill todo">Not started</span></span></summary>
+        <div class="ms-track"><span style="width:0%"></span></div>
+        <ul class="req-list">
+          <li class="todo"><span class="check no"></span><span>Conversations list (masked PSID, preview, timestamp)</span></li>
+          <li class="todo"><span class="check no"></span><span>Chat thread detail panel (violet bot / grey customer bubbles)</span></li>
+          <li class="todo"><span class="check no"></span><span>Settings — business name + fallback message</span></li>
+          <li class="todo"><span class="check no"></span><span>Change password</span></li>
+        </ul>
+      </details>
+
+      <div class="node node-core">DA-M6</div>
+      <details class="ms-card done" id="da6">
+        <summary class="ms-head"><span class="chev"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 6 15 12 9 18"></polyline></svg></span><span class="ms-name">DA-M6 Admin — seller management</span><span class="ms-meta"><span class="ms-count">3/3</span><span class="pill done">Done</span></span></summary>
+        <div class="ms-track"><span style="width:100%"></span></div>
+        <ul class="req-list">
+          <li class="done"><span class="check yes">✓</span><span>Sellers list with suspend / activate / plan change</span></li>
+          <li class="done"><span class="check yes">✓</span><span>Seller detail page</span></li>
+          <li class="done"><span class="check yes">✓</span><span>Admin overview stats</span></li>
+        </ul>
+      </details>
+
+      <div class="node node-core">DA-M7</div>
+      <details class="ms-card done" id="da7">
+        <summary class="ms-head"><span class="chev"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 6 15 12 9 18"></polyline></svg></span><span class="ms-name">DA-M7 Admin — orders + invite codes + health</span><span class="ms-meta"><span class="ms-count">3/3</span><span class="pill done">Done</span></span></summary>
+        <div class="ms-track"><span style="width:100%"></span></div>
+        <ul class="req-list">
+          <li class="done"><span class="check yes">✓</span><span>Admin orders table (all sellers, risk filter)</span></li>
+          <li class="done"><span class="check yes">✓</span><span>Invite codes generate + list</span></li>
+          <li class="done"><span class="check yes">✓</span><span>Health page (RAG engine + MongoDB, auto-refresh 30s)</span></li>
+        </ul>
+      </details>
     </div>
-    <footer><span>Source: <code>PROGRESS.md</code> Phase 4 note</span><span>Last synced: 2026-10-30</span></footer>
+    <footer><span>Source: <code>PROGRESS.md</code> Phase 4</span><span>Last synced: 2026-10-31</span></footer>
   </div>
 </div>
 

@@ -67,7 +67,6 @@ export default function IntegrationsPage() {
 
   const [toast, setToast] = useState<{ message: string; type: 'success' | 'error' } | null>(null);
   const [fbLoading, setFbLoading] = useState(false);
-  const [showManualForm, setShowManualForm] = useState(false);
   const [manualPageId, setManualPageId] = useState('');
   const [manualToken, setManualToken] = useState('');
   const [manualError, setManualError] = useState('');
@@ -267,51 +266,8 @@ export default function IntegrationsPage() {
               </div>
             ) : (
               <div className="space-y-4">
-                {/* OAuth button */}
-                <div>
-                  <button
-                    onClick={() => { void startFacebookOAuth(); }}
-                    disabled={fbLoading}
-                    className="flex items-center gap-2 px-5 py-3 rounded-xl bg-[#1877F2] text-white text-sm font-semibold hover:bg-[#1565D8] disabled:opacity-60 transition-colors shadow-sm"
-                  >
-                    {fbLoading ? (
-                      <><RefreshCw size={15} className="animate-spin" /> Redirecting to Facebook…</>
-                    ) : (
-                      <><Globe size={15} /> Connect with Facebook</>
-                    )}
-                  </button>
-                  <p className="text-xs text-[#9CA3AF] mt-1.5">
-                    Facebook-এ গিয়ে login করো, Page বাছো — হয়ে গেল।
-                  </p>
-                </div>
-
-                {/* Divider */}
-                <div className="flex items-center gap-3">
-                  <div className="flex-1 h-px bg-[#EDE9FE]" />
-                  <span className="text-xs text-[#9CA3AF]">অথবা manually connect করো</span>
-                  <div className="flex-1 h-px bg-[#EDE9FE]" />
-                </div>
-
-                {/* Manual form toggle */}
-                {!showManualForm ? (
-                  <button
-                    onClick={() => setShowManualForm(true)}
-                    className="text-sm text-[#7D39EB] hover:underline font-medium"
-                  >
-                    Page ID ও Access Token দিয়ে connect করো →
-                  </button>
-                ) : (
-                  <form onSubmit={(e) => { void handleManualConnect(e); }} className="space-y-3 pt-1">
-                    <div className="flex items-center justify-between">
-                      <p className="text-sm font-medium text-[#09090B]">Manual Connection</p>
-                      <button
-                        type="button"
-                        onClick={() => { setShowManualForm(false); setManualError(''); }}
-                        className="text-[#9CA3AF] hover:text-[#6B7280]"
-                      >
-                        <X size={15} />
-                      </button>
-                    </div>
+                {/* Manual fields — shown by default */}
+                <form onSubmit={(e) => { void handleManualConnect(e); }} className="space-y-3">
                     <div>
                       <label className="block text-xs font-medium text-[#6B7280] mb-1">Facebook Page ID</label>
                       <input
@@ -353,7 +309,26 @@ export default function IntegrationsPage() {
                       )}
                     </button>
                   </form>
-                )}
+
+                {/* Divider */}
+                <div className="flex items-center gap-3 pt-1">
+                  <div className="flex-1 h-px bg-[#EDE9FE]" />
+                  <span className="text-xs text-[#9CA3AF]">অথবা</span>
+                  <div className="flex-1 h-px bg-[#EDE9FE]" />
+                </div>
+
+                {/* OAuth — secondary */}
+                <button
+                  onClick={() => { void startFacebookOAuth(); }}
+                  disabled={fbLoading}
+                  className="flex items-center gap-2 px-4 py-2.5 rounded-lg border border-[#1877F2]/30 text-[#1877F2] text-sm font-medium hover:bg-[#1877F2]/5 disabled:opacity-60 transition-colors"
+                >
+                  {fbLoading ? (
+                    <><RefreshCw size={14} className="animate-spin" /> Redirecting…</>
+                  ) : (
+                    <><Globe size={14} /> Connect with Facebook (OAuth)</>
+                  )}
+                </button>
               </div>
             )}
           </div>
